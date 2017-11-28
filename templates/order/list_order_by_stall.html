@@ -1,0 +1,36 @@
+{% extends "order/home.html" %}
+
+{% block order %}
+  <br>
+  <h3>Stall: {{ stall.description }}</h3>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <tr>
+        <td>Order Id</td>
+        <td>Status</td>
+        <td>Date Created</td>
+        <td></td>
+      </tr>
+    {% for order in orders %}
+      <form action = "/order/cancel/" method="post">
+        {% csrf_token %}
+        <tr>
+          <td><a href="/order/{{ user.id }}/order/{{order.order.id}}/">{{order.order.id}}</a></td>
+          <td>{{ order.order.status }}</td>
+          <td>{{ order.order.created_date }}</td>
+          <td><input type="submit" name="submit" value="Cancel" {% if order.order.status != 'New' %} disabled{% endif %}></td>
+          <input type="text" name="user_id" value="{{user.id}}" hidden>
+          <input type="text" name="order_id" value="{{order.order.id}}" hidden>
+        </tr>
+      </form>
+    {% endfor %}
+    </table>
+  </div>
+  <br>
+  <form action = "/order/{{user_id}}/" method="post">
+    {% csrf_token %}
+    <input type="text" name="stall_id" value="{{stall.id}}" hidden>
+    <input type="submit" name="submit" value="Create Order">
+  </form>
+
+{% endblock %}

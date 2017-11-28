@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Invoice
+{% endblock %}
+
+{% block body %}
+  <h2> Invoice </h2>
+  {% if error %}
+    <p style="color: red;">
+      Please correct the error {{ error }} below.
+    </p>
+  {% endif %}
+  <br>
+
+  <form action = "/invoice/{{user_id}}/stall/" method="get">
+    Search Stall:
+    <select name="stall_id">
+      <option>All</option>
+      {% for invoice in invoices%}
+        {% if invoice.status %}
+          <option value="{{invoice.stall.id}}">{{invoice.stall.description}}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+    {% csrf_token %}
+    <td><input type="submit" name="search" value="Search"></td>
+  </form>
+
+  {% for invoice in invoices %}
+    {% if invoice.invoice %}
+
+      {% block invoice%}
+      {% endblock %}
+
+    {% endif %}
+  {% endfor %}
+{% endblock %}

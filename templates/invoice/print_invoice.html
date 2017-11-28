@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>
+      Fish Monger - {{ invoices.0.stall.description }} - Invoice {{ invoices.0.invoice.id }}
+    </title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      h3 {
+        font-size: 90%;
+      }
+      h4 {
+        font-size: 85%;
+      }
+      table{
+        font-size: 80%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <br>
+    <input type="button" onclick="printDiv('print_content')" value="Print"/>
+    <input type="button" onclick="window.open('', '_self', ''); window.close();" value="Close Window"/>
+
+    <div id="print_content">
+
+      {% for invoice in invoices %}
+        {% if invoice.invoice %}
+          {% block invoice%}
+          {% endblock %}
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <script>
+      function printDiv(divName) {
+         var printContents = document.getElementById(divName).innerHTML;
+         var originalContents = document.body.innerHTML;
+         document.body.innerHTML = printContents;
+         window.print();
+         document.body.innerHTML = originalContents;
+      }
+    </script>
+  </body>
+</html>

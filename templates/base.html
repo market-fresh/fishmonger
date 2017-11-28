@@ -1,0 +1,55 @@
+{% load static %}
+
+<html>
+  <head>
+    <title>
+      Pan's Fish - {% block title %}{% endblock %}
+    </title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    {%block css%}{%endblock%}
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {%block js%}{%endblock%}
+
+    {%block head%}{%endblock%}
+
+  </head>
+
+  <body>
+    <div class="text-center">
+      <h1><a role="button" href="/home/">Pan's Fish</a></h1>
+    </div>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10 text-center">
+      {% if user.is_authenticated %}
+        {% if request.user.is_superuser %}
+          <a role="button" href="/fish/">Fish</a> |
+          <a role="button" href="/stall/">Stall</a> |
+        {% endif %}
+        <a role="button" href="/order/{{ user.id }}/">Orders</a> |
+        {% if request.user.is_superuser %}
+          <a role="button" href="/purchasing/{{ user.id }}/summary/">Purchasing</a> |
+        {% endif %}
+          <a role="button" href="/invoice/{{ user.id }}/">Invoice</a> |
+        {% if request.user.is_superuser %}
+          <a role="button" href="/signup/">Create User</a> |
+        {% endif %}
+        {{ user.username }} - <a role="button" href="/logout/">Log out</a>
+      {% else %}
+        <a role="button" href="/login/">Log in</a>
+      {% endif %}
+    </div>
+    <div class="col-xs-1"></div>
+    <br><hr><br>
+    <div class="col-xs-1"></div>
+    <div class="col-xs-10">
+      {% block body %}
+      {% endblock %}
+    </div>
+    <div class="col-xs-1"></div>
+  </body>
+</html>

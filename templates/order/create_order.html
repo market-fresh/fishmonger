@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Order
+{% endblock %}
+
+{% block body %}
+  <h2> Orders </h2>
+  {% if form.errors %}
+    <p style="color: red;">
+      Please correct the error {{ formset.errors|pluralize }} below.
+    </p>
+  {% else %}
+    {% if save %}
+    <p style="color: green;">
+      Order {{ order.id }} has been saved.
+    </p>
+    {% endif %}
+  {% endif %}
+
+  <form action = "/order/{{user_id}}/" method="post">
+    <br>
+    <h3>Stall: {{ stall.description }}</h3>
+
+    {% csrf_token %}
+    <input type="text" name="stall_id" value="{{stall.id}}" hidden>
+    <input type="submit" name="submit" value="Create Order">
+
+    <br>
+  </form>
+
+{% endblock %}

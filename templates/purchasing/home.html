@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Purchase Order
+{% endblock %}
+
+{% block body %}
+  <h2> Purchasing </h2>
+  {% if error %}
+    <p style="color: red;">
+      Please correct the error "{{ error }}" below.
+    </p>
+  {% endif %}
+  <div>
+    <div class="col-xs-12">
+      {% if generated %}
+        <a role="button" href="/purchasing/{{ user.id }}/summary/">Summary</a> |
+        <a role="button" href="/purchasing/{{ user.id }}/fish/">By Fish</a> |
+        <a role="button" href="/purchasing/{{ user.id }}/stall/">By Stall</a> |
+        <a role="button" href="/purchasing/{{ user.id }}/purchasing/">Purchasing Report</a>
+      {% endif %}
+      {% block purchasing%}
+      {% endblock %}
+    </div>
+  </div>
+
+{% endblock %}

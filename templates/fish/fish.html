@@ -1,0 +1,130 @@
+{%extends "base.html" %}
+
+{% block title %}
+  Fish
+{% endblock %}
+
+{% block body %}
+  <div class="col-xs-12">
+    <div class="col-xs-6">
+      <h2> Create Fish </h2>
+      {% if form.errors %}
+        <p style="color: red;">
+          Please correct the error {{ form.errors|pluralize }} below.
+        </p>
+      {% else %}
+        {% if save %}
+        <p style="color: green;">
+          Fish has been saved.
+        </p>
+        {% endif %}
+      {% endif %}
+
+
+      <form action = "/fish/" method="post">
+        <table>
+          {{ form.as_table }}
+        </table>
+        {% csrf_token %}
+        <br>
+        <input type="submit" name="submit" value="Submit">
+      </form>
+    </div>
+
+    <div class="col-xs-6">
+      <h2> Search Fish </h2>
+      {% if error %}
+        <p style="color: red;">
+          Please submit proper search.
+        </p>
+      {% endif %}
+
+      <form action = "/search_fish" method="get">
+        <input type="text" name="q">
+        <input type="submit" value="Search">
+      </form>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <h2> Results </h2>
+    {% if fish %}
+      <p>  {{ fish|length }} fish{{ fish|pluralize }} existing. </p>
+      <table class="table table-bordered">
+        <tr>
+          <td> Name </td>
+          <td> Chinese Name </td>
+          <td> Sequence </td>
+          <td></td>
+        </tr>
+        {% for f in fish %}
+          <form action = "/fish/delete/{{f.id}}/" method="post">
+            {% csrf_token %}
+            <tr>
+              <td><input type="text" name="name_{{f.id}}" value="{{f.name}}"></td>
+              <td><input type="text" name="chinese_name_{{f.id}}" value="{{f.chinese_name}}"></td>
+              <input type="text" name="sequence" value="{{f.sequence}}" hidden>
+              <td>
+                <input type="button" name="up_{{f.id}}" value="Up" {% if f.sequence <= 1 %} disabled {% endif %}/>
+                <input type="button" name="down_{{f.id}}" value="Down" {% if f.sequence == fish|length %} disabled {% endif %}/>
+              </td>
+              <td>
+                <input type="submit" name="submit" value="Delete"/>
+              </td>
+            </tr>
+            <script>
+              $("input[name=name_{{f.id}}]").change(function(){
+                $.post("/fish/update/{{f.id}}/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    name: document.getElementsByName('name_{{f.id}}')[0].value,
+                    chinese_name: document.getElementsByName('chinese_name_{{f.id}}')[0].value
+                });
+              });
+              $("input[name=chinese_name_{{f.id}}]").change(function(){
+                $.post("/fish/update/{{f.id}}/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    name: document.getElementsByName('name_{{f.id}}')[0].value,
+                    chinese_name: document.getElementsByName('chinese_name_{{f.id}}')[0].value
+                });
+              });
+              $("input[name=up_{{f.id}}]").click(function(){
+                $.post("/fish/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    id: '{{f.id}}',
+                    name: document.getElementsByName('name_{{f.id}}')[0].value,
+                    chinese_name: document.getElementsByName('chinese_name_{{f.id}}')[0].value,
+                    sequence: '{{f.sequence}}',
+                    submit: document.getElementsByName('up_{{f.id}}')[0].value
+                },
+                function(data, status){
+                  window.location.reload();
+                });
+              });
+              $("input[name=down_{{f.id}}]").click(function(){
+                $.post("/fish/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    id: '{{f.id}}',
+                    name: document.getElementsByName('name_{{f.id}}')[0].value,
+                    chinese_name: document.getElementsByName('chinese_name_{{f.id}}')[0].value,
+                    sequence: '{{f.sequence}}',
+                    submit: document.getElementsByName('down_{{f.id}}')[0].value
+                },
+                function(data, status){
+                  window.location.reload();
+                });
+              });
+
+            </script>
+          </form>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p> No fish configured. </p>
+    {% endif %}
+
+  </div>
+{% endblock %}

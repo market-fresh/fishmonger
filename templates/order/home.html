@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Order
+{% endblock %}
+
+{% block body %}
+  <h2> Orders </h2>
+  {% if form.errors %}
+    <p style="color: red;">
+      Please correct the error {{ formset.errors|pluralize }} below.
+    </p>
+  {% else %}
+    {% if save %}
+    <p style="color: green;">
+      Order {{ order.id }} has been saved.
+    </p>
+    {% endif %}
+  {% endif %}
+
+  <div>
+    <div class="col-xs-12">
+      {% if request.user.is_superuser %}
+        <a role="button" href="/order/{{ user.id }}/summary/">Summary</a> |
+        <a role="button" href="/order/{{ user.id }}/">Open Order Details</a>
+
+      {% endif %}
+
+      {% block order%}
+      {% endblock %}
+    </div>
+  </div>
+
+
+{% endblock %}

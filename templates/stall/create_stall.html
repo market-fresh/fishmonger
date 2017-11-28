@@ -1,0 +1,31 @@
+{%extends "base.html" %}
+
+{% block title %}
+  Create Stall
+{% endblock %}
+
+{% block body %}
+  <h2> Create Stall </h2>
+  {% if form.errors %}
+    <p style="color: red;">
+      Please correct the error {{ form.errors|pluralize }} below.
+    </p>
+  {% else %}
+    {% if save %}
+    <p style="color: green;">
+      Stall has been saved.
+    </p>
+    {% endif %}
+  {% endif %}
+
+
+  <form action = "" method="post">
+    <table>
+      {{ form.as_table }}
+    </table>
+    {% csrf_token %}
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+
+{% endblock %}

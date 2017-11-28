@@ -1,0 +1,15 @@
+{%extends "base.html" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block body %}
+  <div class="text-center">
+    {% if user.is_authenticated %}
+      <p>Welcome, {{ user.username }}!</p>
+    {% else %}
+      <p>Welcome, new user! Please log in!</p>
+    {% endif %}
+  </div>
+{% endblock %}

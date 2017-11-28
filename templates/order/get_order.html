@@ -1,0 +1,90 @@
+{% extends "order/home.html" %}
+
+{% block order %}
+  <form action = "/order/{{user_id}}/order/{{order.order.id}}/" method="post">
+    <br>
+    <h3>Stall: {{ stall.description }}</h3>
+    <h4>Order: {{ order.order.id }} | Status: {{ order.order.status }}</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+          <tr>
+            <td>Fish</td>
+            <td>Quantity</td>
+            <td>Status</td>
+          </tr>
+          {% for order_item in order.order_item %}
+            <tr>
+              <td>{{ order_item.name }}</td>
+              <td><input type="number" name="quantity-{{order_item.id}}" {% if order_item.value %} value="{{order_item.value}}" {%endif%} {% if order.order.status != 'New' %} disabled {% endif %}></td>
+              <td>{{ order_item.status }}</td>
+              <script>
+                $("input[name=quantity-{{order_item.id}}]").change(function(){
+                  $.post("/order/{{user_id}}/order/{{order.order.id}}/",
+                  {
+                      csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      stall_id: "{{stall.id}}",
+                      order_id: "{{order.order.id}}",
+                      order_item_id: "{{order_item.id}}",
+                      key: "quantity",
+                      value: document.getElementsByName('quantity-{{order_item.id}}')[0].value,
+                      submit: 'Save'
+                  });
+                });
+              </script>
+            </tr>
+          {% endfor %}
+          <tr>
+            <tr id="new_fish" style="display:none;">
+              <td>
+                <span>Fish Name</span>
+                <span>
+                  <input type="text" name="fish_name">
+
+                  <script>
+                  $("input[name=fish_name]").change(function(){
+                    $.post("/order/{{user_id}}/add_fish/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        fish_name: document.getElementsByName('fish_name')[0].value,
+                        save: 'Save'
+
+                    },
+                    function(data, status){
+                      window.location.reload();
+                    });
+                  });
+                  </script>
+                </span>
+              </td>
+              <td></td>
+              <td></td>
+          </tr>
+          <tr>
+            <td>
+              <input type="button" id="add" name="add" value="Add">
+              <script>
+              $('#add').click(function() {
+                var result_style = document.getElementById('new_fish').style;
+                result_style.display = 'table-row';
+              });
+              </script>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+
+      <br>
+      {% csrf_token %}
+      <input type="text" name="stall_id" value="{{stall.id}}" hidden>
+      <input type="text" name="order_id" value="{{order.order.id}}" hidden>
+      {% if order.order.status == 'New' %}
+        <input type="submit" name="submit" value="Cancel">
+        <input type="submit" name="submit" value="Submit for Purchasing">
+      {% endif %}
+
+    <br>
+  </form>
+
+{% endblock %}

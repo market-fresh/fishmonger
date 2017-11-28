@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>
+      Fish Monger - Purchase Order {{ purchase_order_id }}
+    </title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    <style>
+      h3 {
+        font-size: 90%;
+      }
+      h4 {
+        font-size: 85%;
+      }
+      table{
+        font-size: 80%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <br>
+    <input type="button" onclick="printDiv('print_content')" value="Print"/>
+    <input type="button" onclick="window.open('', '_self', ''); window.close();" value="Close Window"/>
+
+    <div id="print_content">
+      <div class="col-xs-12">
+        <h3>Purchasing Report: </h3>
+        <h4>Purchase Order: {{purchase_order_id}}</h4>
+        <hr>
+
+        <div id="report_content" class="table-responsive">
+          <table id="myTable" class="table table-bordered">
+            <thead>
+              <th>Fish</th>
+              {% for s in stall %}
+                <th>{{s.description}}</th>
+              {% endfor %}
+              <th bgcolor="lightblue">Total</th>
+            </thead>
+
+            <tbody>
+              {% for fish in purchase_order %}
+                <tr>
+                  <td>{{fish.name}} ({{fish.chinese_name}})</td>
+                  {% for value in fish.values %}
+                    <td>
+                      {% if value.quantity != 0%}
+                        {{value.quantity}}
+                      {% endif %}
+                    </td>
+                  {% endfor %}
+                    <td bgcolor="lightblue">
+                      {% if fish.total.quantity != 0%}
+                        {{fish.total.quantity}}
+                      {% endif %}
+                    </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function printDiv(divName) {
+         var printContents = document.getElementById(divName).innerHTML;
+         var originalContents = document.body.innerHTML;
+         document.body.innerHTML = printContents;
+         window.print();
+         document.body.innerHTML = originalContents;
+      }
+    </script>
+
+  </body>
+</html>

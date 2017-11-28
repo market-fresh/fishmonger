@@ -1,0 +1,177 @@
+{% extends parent_template %}
+
+
+{% block invoice%}
+  <div class="col-xs-12">
+    <h3>Stall: {{ invoice.stall.description }}</h3>
+    <h4>Invoice: {{ invoice.invoice.id }}</h4>
+    <h4>Date: {{ invoice.invoice.created_date }}</h4>
+    
+    <div class="table-responsive">
+      <form action="/invoice/{{user_id}}/" method="post">
+        <input type="text" name="invoice_id" value="{{invoice.invoice.id}}" hidden>
+        <table class="table table-bordered">
+          <tr>
+            <td>Fish</td>
+            <td>Kg</td>
+            <td>Cost ($)</td>
+            <td>Total Cost</td>
+            <td>Next Day Order</td>
+          </tr>
+          {% for item in invoice.invoice_item%}
+            <tr>
+              {% if request.user.is_superuser and not print%}
+                <td>{{item.name}}</td>
+                <td><input type="text" size=5 name="weight_{{invoice.invoice.id}}_{{item.id}}" value="{{item.weight}}"></td>
+                <td>$ <input type="text" size=10 name="cost_{{invoice.invoice.id}}_{{item.id}}" value="{{item.cost}}"></td>
+                {% csrf_token %}
+                <script>
+                  $("input[name=weight_{{invoice.invoice.id}}_{{item.id}}]").change(function(){
+                    $.post("/invoice/{{user_id}}/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        key: 'item',
+                        invoice_id: "{{invoice.invoice.id}}",
+                        invoice_item_id: "{{item.id}}",
+                        weight: document.getElementsByName('weight_{{invoice.invoice.id}}_{{item.id}}')[0].value,
+                        cost: document.getElementsByName('cost_{{invoice.invoice.id}}_{{item.id}}')[0].value,
+                        save: 'Save'
+                    },
+                    function(data, status){
+                      window.location.reload();
+                    });
+                  });
+                  $("input[name=cost_{{invoice.invoice.id}}_{{item.id}}]").change(function(){
+                    $.post("/invoice/{{user_id}}/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        key: 'item',
+                        invoice_id: "{{invoice.invoice.id}}",
+                        invoice_item_id: "{{item.id}}",
+                        weight: document.getElementsByName('weight_{{invoice.invoice.id}}_{{item.id}}')[0].value,
+                        cost: document.getElementsByName('cost_{{invoice.invoice.id}}_{{item.id}}')[0].value,
+                        save: 'Save'
+                    },
+                    function(data, status){
+                      window.location.reload();
+                    });
+                  });
+                </script>
+                <td>$ {{item.total}}</td>
+                <td></td>
+              {% else %}
+                <td>{{item.name}}</td>
+                <td>{{item.weight}}</td>
+                <td>$ {{item.cost}}</td>
+                <td>$ {{item.total}}</td>
+                <td></td>
+              {% endif%}
+            </tr>
+          {% endfor %}
+          <tr><td></td><td></td><td></td></tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Ice</td>
+            {% if invoice.invoice.ice %}
+              <td>$ <input type="text" name="ice_{{invoice.invoice.id}}" value="{{invoice.invoice.ice}}"></td>
+            {% else %}
+              <td>$ <input type="text" name="ice_{{invoice.invoice.id}}" value=""></td>
+            {% endif %}
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Total Cost</td>
+            <td>$ <input type="text" name="cost_{{invoice.invoice.id}}" value="{{invoice.invoice.total_cost}}" disabled></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Float</td>
+            {% if invoice.invoice.cash_float %}
+              <td>$ <input type="text" name="cash_float_{{invoice.invoice.id}}" value="{{invoice.invoice.cash_float}}"></td>
+            {% else %}
+              <td>$ <input type="text" name="cash_float_{{invoice.invoice.id}}" value=""></td>
+            {% endif %}
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Sales</td>
+            {% if invoice.invoice.sales %}
+              <td>$ <input type="text" name="sales_{{invoice.invoice.id}}" value="{{invoice.invoice.sales}}"></td>
+            {% else %}
+              <td>$ <input type="text" name="sales_{{invoice.invoice.id}}" value=""></td>
+            {% endif %}
+            <td></td>
+          </tr>
+        </table>
+        {% csrf_token %}
+        <script>
+          $("input[name=ice_{{invoice.invoice.id}}]").change(function(){
+            $.post("/invoice/{{user_id}}/",
+            {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                key: 'total',
+                invoice_id: "{{invoice.invoice.id}}",
+                ice: document.getElementsByName('ice_{{invoice.invoice.id}}')[0].value,
+                cash_float: document.getElementsByName('cash_float_{{invoice.invoice.id}}')[0].value,
+                sales: document.getElementsByName('sales_{{invoice.invoice.id}}')[0].value,
+                save: 'Save'
+            });
+          });
+          $("input[name=cash_float_{{invoice.invoice.id}}]").change(function(){
+            $.post("/invoice/{{user_id}}/",
+            {
+                csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                key: 'total',
+                invoice_id: "{{invoice.invoice.id}}",
+                ice: document.getElementsByName('ice_{{invoice.invoice.id}}')[0].value,
+                cash_float: document.getElementsByName('cash_float_{{invoice.invoice.id}}')[0].value,
+                sales: document.getElementsByName('sales_{{invoice.invoice.id}}')[0].value,
+                save: 'Save'
+            });
+          });
+          $("input[name=sales_{{invoice.invoice.id}}]").change(function(){
+            $.post("/invoice/{{user_id}}/",
+            {
+              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+              key: 'total',
+              invoice_id: "{{invoice.invoice.id}}",
+              ice: document.getElementsByName('ice_{{invoice.invoice.id}}')[0].value,
+              cash_float: document.getElementsByName('cash_float_{{invoice.invoice.id}}')[0].value,
+              sales: document.getElementsByName('sales_{{invoice.invoice.id}}')[0].value,
+              save: 'Save'
+            });
+          });
+        </script>
+        {% if not print %}
+          <input type="button" name="print_{{invoice.invoice.id}}" value="Print">
+          <script>
+            $("input[name=print_{{invoice.invoice.id}}]").click(function(){
+                $.post("/invoice/{{user_id}}/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    stall_id: "{{ invoice.stall.id }}",
+                    invoice_id: "{{invoice.invoice.id}}",
+                    save: 'Print'
+                },
+                function(data, status){
+                  myWindow=window.open('','','width=750,height=500');
+                  myWindow.document.write(data);
+                  myWindow.focus();
+                });
+            });
+          </script>
+          {% if invoice.status != 'Closed' %}
+            <input type="submit" name="save" value="Close">
+          {% endif %}
+        {% endif %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

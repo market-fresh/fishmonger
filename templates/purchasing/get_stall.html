@@ -1,0 +1,74 @@
+{% extends "purchasing/stall.html" %}
+
+{% block stall %}
+
+  {% for stall in purchase_order.order%}
+    <h5>Stall: {{stall.stall}}</h5>
+    <table class="table table-bordered">
+      <tr>
+        <td>Fish</td>
+        <td>Quantity</td>
+        <td>Weight</td>
+        <td>Cost</td>
+        <td>Status</td>
+      </tr>
+      {% for order_item in stall.order_item %}
+        <tr>
+          <form action = "/purchasing/{{user_id}}/stall/" method="post">
+            <td>{{order_item.name}}</td>
+            <td>{{order_item.value}}</td>
+            {% if order_item.weight %}
+              <td><input type="text" name="weight_{{order_item.id}}" value="{{order_item.weight}}"></td>
+            {% else %}
+              <td><input type="text" name="weight_{{order_item.id}}" value=0></td>
+            {% endif %}
+
+            {% if order_item.cost %}
+              <td><input type="text" name="cost_{{order_item.id}}" value="{{order_item.cost}}"></td>
+            {% else %}
+              <td><input type="text" name="cost_{{order_item.id}}" value=0></td>
+            {% endif %}
+            <td>{{order_item.status}}</td>
+            {% if request.user.is_superuser%}
+              {% csrf_token %}
+              <script>
+                $("input[name=weight_{{order_item.id}}]").change(function(){
+                  $.post("/purchasing/{{user_id}}/stall/",
+                  {
+                      csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      order_item_id: "{{order_item.id}}",
+                      stall_name: "{{stall.stall}}",
+                      weight: document.getElementsByName('weight_{{order_item.id}}')[0].value,
+                      cost: document.getElementsByName('cost_{{order_item.id}}')[0].value,
+                      save: 'Save'
+                  },
+                  function(data, status){
+                    window.location.reload();
+                  });
+                });
+                $("input[name=cost_{{order_item.id}}]").change(function(){
+                  $.post("/purchasing/{{user_id}}/stall/",
+                  {
+                      csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      order_item_id: "{{order_item.id}}",
+                      stall_name: "{{stall.stall}}",
+                      weight: document.getElementsByName('weight_{{order_item.id}}')[0].value,
+                      cost: document.getElementsByName('cost_{{order_item.id}}')[0].value,
+                      save: 'Save'
+                  },
+                  function(data, status){
+                    window.location.reload();
+                  });
+                });
+              </script>
+            {% endif %}
+          </tr>
+          <input type="text" name="order_item_id" value="{{order_item.id}}" hidden>
+          <input type="text" name="stall_name" value="{{stall.stall}}" hidden>
+        </form>
+      {% endfor %}
+    </table>
+    <br>
+  {% endfor %}
+
+{% endblock %}

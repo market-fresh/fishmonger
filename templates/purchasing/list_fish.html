@@ -1,0 +1,59 @@
+{% extends "purchasing/home.html" %}
+
+{% block purchasing %}
+
+  <div class="table-responsive">
+    <div class="col-xs-12">
+      <h3>Details: </h3>
+      <h4>Purchase Order: {{purchase_order.purchase_order.id}}</h4>
+      <h4>Date: {{purchase_order.purchase_order.created_date}}</h4>
+      <hr>
+      <table class="table table-bordered table-hover table-condensed">
+        <tr>
+          <td>Fish</td>
+          <td>Quantity</td>
+          <td>Weight</td>
+          <td>Cost</td>
+        </tr>
+        {% for order_item in purchase_order.order_item %}
+          <tr>
+              <form action = "/purchasing/{{user_id}}/fish/" method="post">
+              <td>{{order_item.name}}</td>
+              <td>{{order_item.value}}</td>
+              <td><input type="number" name="weight_{{order_item.id}}" {% if order_item.weight %} value="{{order_item.weight}}" {% endif %}></td>
+              <td><input type="number" name="cost_{{order_item.id}}" {% if order_item.buying_cost %} value="{{order_item.buying_cost}}" {% endif %}></td>
+              {% if request.user.is_superuser%}
+                {% csrf_token %}
+                <input type="text" name="purchase_order_item_id" value="{{order_item.id}}" hidden>
+
+                <script>
+                  $("input[name=weight_{{order_item.id}}]").change(function(){
+                    $.post("/purchasing/{{user_id}}/fish/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        purchase_order_item_id: "{{order_item.id}}",
+                        weight: document.getElementsByName('weight_{{order_item.id}}')[0].value,
+                        cost: document.getElementsByName('cost_{{order_item.id}}')[0].value,
+                        save: 'Save'
+                    });
+                  });
+                  $("input[name=cost_{{order_item.id}}]").change(function(){
+                    $.post("/purchasing/{{user_id}}/fish/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        purchase_order_item_id: "{{order_item.id}}",
+                        weight: document.getElementsByName('weight_{{order_item.id}}')[0].value,
+                        cost: document.getElementsByName('cost_{{order_item.id}}')[0].value,
+                        save: 'Save'
+                    });
+                  });
+                </script>
+              {% endif %}
+            </form>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{%extends "base.html" %}
+
+{% block title %}
+  Search Stall
+{% endblock %}
+
+{% block body %}
+  <h2> Search Stall </h2>
+  {% if error %}
+    <p style="color: red;">
+      Please submit proper search.
+    </p>
+  {% endif %}
+
+  <form action = "/search_stall" method="get">
+    <input type="text" name="q">
+    <input type="submit" value="Search">
+  </form>
+
+  {% if stall %}
+    <p>  {{ stall|length}} stall{{stall|pluralize}} existing. </p>
+    <table>
+      {% for s in stall %}
+        <tr><td> {{ s.description }} </td></tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p> No stalls configured. </p>
+  {% endif %}
+
+{% endblock %}

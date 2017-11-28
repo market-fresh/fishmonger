@@ -1,0 +1,83 @@
+{% extends "order/home.html" %}
+
+{% block order %}
+  <br><br>
+
+  <form action = "/order/{{user_id}}/stall/" method="get">
+    Search Stall:
+    <select name="stall_id">
+      <option>All</option>
+      {% for stall in stall_orders%}
+        <option value="{{stall.stall.id}}">{{stall.stall.description}}</option>
+      {% endfor %}
+    </select>
+    {% csrf_token %}
+    <td><input type="submit" name="search" value="Search"></td>
+  </form>
+
+  {% for stall in stall_orders %}
+      <br>
+      <h3>Stall: {{ stall.stall.description }}</h3>
+      {% if stall.order_list %}
+        {% for order in stall.order_list %}
+          {% if order.order %} <h4>Order: <a href="/order/{{ user.id }}/order/{{order.order.id}}/">{{order.order.id}}</a> | Status: {{ order.order.status }}</h4> {% endif %}
+          <br>
+          <button data-toggle="collapse" data-target="#demo{{order.order.id}}">Hide/Show Order Details</button>
+          <br><br>
+          <div id="demo{{order.order.id}}" class="collapse in">
+            <form action = "/order/{{user_id}}/order/{{order.order.id}}/" method="post">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover table-condensed">
+                  <tr>
+                    <td>Fish</td>
+                    <td>Quantity</td>
+                    <td>Status</td>
+                  </tr>
+                  {% for order_item in order.order_item %}
+                    <tr>
+                      <td>{{ order_item.name }}</td>
+                      <td><input type="text" name="quantity-{{order_item.id}}" value="{{ order_item.value }}" {% if order.order.status != 'New' %} disabled {% endif %}></td>
+                      <td>{{ order_item.status }}</td>
+                      <script>
+                        $("input[name=quantity-{{order_item.id}}]").change(function(){
+                          $.post("/order/{{user_id}}/order/{{order.order.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{stall.stall.id}}",
+                              order_id: "{{order.order.id}}",
+                              order_item_id: "{{order_item.id}}",
+                              key: "quantity",
+                              value: document.getElementsByName('quantity-{{order_item.id}}')[0].value,
+                              submit: 'Save'
+                          });
+                        });
+                      </script>
+                    </tr>
+                  {% endfor %}
+                </table>
+              </div>
+              <br>
+              {% csrf_token %}
+              <input type="text" name="stall_id" value="{{stall.stall.id}}" hidden>
+              <input type="text" name="order_id" value="{{order.order.id}}" hidden>
+
+              {% if order.order %}
+                {% if order.order.status == 'New' %}
+                  <input type="submit" name="submit" value="Cancel">
+                  <input type="submit" name="submit" value="Submit for Purchasing">
+                {% endif %}
+              {% endif %}
+              <br>
+            </form>
+          </div>
+        {% endfor %}
+      {% else %}
+      <br>
+      <form action = "/order/{{user_id}}/" method="post">
+        {% csrf_token %}
+        <input type="text" name="stall_id" value="{{stall.stall.id}}" hidden>
+        <input type="submit" name="submit" value="Create Order">
+      </form>
+      {%endif %}
+  {% endfor %}
+{% endblock %}

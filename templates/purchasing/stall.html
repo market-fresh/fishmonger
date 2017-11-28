@@ -1,0 +1,26 @@
+{% extends "purchasing/home.html" %}
+
+{% block purchasing %}
+  <form action = "/purchasing/{{user_id}}/stall/" method="get">
+    <div class="table-responsive">
+      <div class="col-xs-12">
+        <h3>Details: </h3>
+        <h4>Purchase Order: {{purchase_order.purchase_order.id}}</h4>
+        <h4>Date: {{purchase_order.purchase_order.created_date}}</h4>
+        <br>
+        Search Stall:
+        <select name="stall_name">
+          <option>All</option>
+          {% for stall in purchase_order.order%}
+            <option value="{{stall.stall}}">{{stall.stall}}</option>
+          {% endfor %}
+        </select>
+        {% csrf_token %}
+        <td><input type="submit" name="search" value="Search"></td>
+      </div>
+    </div>
+  </form>
+  <hr>
+  {% block stall %}
+  {% endblock %}
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "purchasing/home.html" %}
+
+{% block purchasing %}
+
+<div class="table-responsive">
+  <div class="col-xs-12">
+    <h3>Summary: </h3>
+    <h4>Purchase Order: {{purchase_order_id}}</h4>
+    <hr>
+    <table class="table table-bordered">
+      <tr>
+        <td>Stall</td>
+        <td>Order Id</td>
+        <td>Order Status</td>
+        <td>Date Created</td>
+        <td></td>
+      </tr>
+      {% for stall in purchase_order %}
+        {% if stall.order_list %}
+          {% for order in stall.order_list %}
+            <tr>
+              <td><a href="/order/{{ user.id }}/stall/{{stall.stall.id}}/">{{stall.stall.description}}</a></td>
+              <form action = "/purchasing/{{user_id}}/summary/" method="post">
+                {% csrf_token %}
+                <td><a href="/order/{{ user.id }}/order/{{order.order.id}}/">{{order.order.id}}</a></td>
+                <td>{{order.order.status}}</td>
+                <td>{{order.order.created_date}}</td>
+                <input type="text" name="order_id" value="{{order.order.id}}" hidden>
+                <input type="text" name="stall_id" value="{{stall.stall.id}}" hidden>
+                <td><input type="submit" name="save" value="Generate Invoice" {% if order.order.status != 'Purchasing' %}disabled{% endif %}></td>
+              </form>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td><a href="/order/{{ user.id }}/stall/{{stall.stall.id}}/">{{stall.stall.description}}</a></td>
+            <td></td>
+            <td>No order</td>
+            <td></td>
+            <td></td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+  </table>
+  <br>
+  </div>
+</div>
+
+<form action = "/purchasing/{{user_id}}/summary/" method="post">
+  <div>
+    {% csrf_token %}
+    {% if not error %}
+      {% if generated %}
+
+      {% else %}
+        <input type="submit" name="save" value="Generate Purchase Order">
+      {% endif %}
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

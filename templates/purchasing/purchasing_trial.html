@@ -1,0 +1,237 @@
+{% extends "purchasing/home.html" %}
+{% load static %}
+
+{%block css%}
+{#<link rel="stylesheet" href="http://www.fixedheadertable.com/css/defaultTheme.css" media="screen" />#}
+{%endblock%}
+
+{%block js%}
+{#<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fixed-header-table/1.3.0/jquery.fixedheadertable.min.js"></script>#}
+<script src="{% static 'js/tableHeadFixer.js' %}"></script>
+{%endblock%}
+
+{%block head%}
+<style>
+			#parent {
+				height: 300px;
+			}
+
+			#myTable {
+				width: 1800px !important;
+			}
+		</style>
+{%endblock%}
+
+{% block purchasing %}
+<div class="col-xs-12">
+  <h3>Purchasing Report: </h3>
+  <h4>Purchase Order: {{purchase_order_id}}</h4>
+  <hr>
+  <input type="button" name="print" value="Print">
+  <script>
+    $("input[name=print]").click(function(){
+        $.post("/purchasing/{{user_id}}/print_purchasing/",
+        {
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+            save: 'Print'
+        },
+        function(data, status){
+          myWindow=window.open('','','width=750,height=500');
+          myWindow.document.write(data);
+          myWindow.focus();
+        });
+    });
+  </script>
+  <br><br>
+
+  <div id="report_content" class="table-responsive">
+    <div id="parent">
+      <table id="myTable" class="table table-bordered table-hover">
+        <thead style="z-index: 60">
+          <tr>
+            <th bgcolor="black" style="color:white"><div>Fish</div></th>
+            {% for s in stall %}
+              <th bgcolor="black" style="color:white"><div>{{s.description}}</div></th>
+            {% endfor %}
+            <th bgcolor="lightblue"><div>Total</div></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for fish in purchase_order %}
+            <tr>
+              <td bgcolor="black" style="z-index: 50; color:white">{{fish.name}} ({{fish.chinese_name}})</td>
+              {% for value in fish.values %}
+                <td style="z-index: 40;">
+                  {% csrf_token %}
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-xs-4">Order</div>
+                      <div class="col-xs-4">Kg</div>
+                      <div class="col-xs-4">$</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-4"><input type="number" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></div>
+                      <div class="col-xs-4"><input type="number" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></div>
+                      <div class="col-xs-4"><input type="number" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></div>
+                      <input type="text" name="order_item" value="{{value.order_item}}" hidden>
+                      <script>
+                        $("input[name=quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "quantity",
+                              value: document.getElementsByName('quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+                          },
+                          function(data, status){
+                            window.location.reload();
+                          });
+                        });
+                        $("input[name=weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "weight",
+                              value: document.getElementsByName('weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+
+                          },
+                          function(data, status){
+                            window.location.reload();
+                          });
+                        });
+                        $("input[name=cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "cost",
+                              value: document.getElementsByName('cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+
+                          },
+                          function(data, status){
+                            var table = document.getElementById ("myTable");
+                            console.log(table);
+                            table.refresh ();
+                          });
+                        });
+                      </script>
+                    </div>
+                  </div>
+                </td>
+              {% endfor %}
+              <td bgcolor="lightblue">
+                <div class="row">
+                  <div class="col-xs-4">Order</div>
+                  <div class="col-xs-4">Kg</div>
+                  <div class="col-xs-4">$</div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></div>
+                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></div>
+                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></div>
+                  <script>
+                  $("input[name=total_cost_{{fish.id}}]").change(function(){
+                    $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                    {
+                        csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                        key: "total_cost",
+                        value: document.getElementsByName('total_cost_{{fish.id}}')[0].value,
+                        save: 'Save'
+
+                    },
+                    function(data, status){
+                      window.location.reload();
+                    });
+                  });
+                  </script>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          <tr id="new_fish" style="display:none;">
+            <td>
+              <div class="row">
+                <div class="col-xs-4">Fish Name</div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4"><input type="text" name="fish_name"></div>
+              </div>
+              <script>
+              $("input[name=fish_name]").change(function(){
+                $.post("/purchasing/{{user_id}}/add_fish/{{purchase_order_id}}/",
+                {
+                    csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    fish_name: document.getElementsByName('fish_name')[0].value,
+                    save: 'Save'
+
+                },
+                function(data, status){
+                  window.location.reload();
+                });
+              });
+              </script>
+            </td>
+            {% for s in stall %}
+            <td>
+              <div class="row">
+                <div class="col-xs-4">Order</div>
+                <div class="col-xs-4">Kg</div>
+                <div class="col-xs-4">$</div>
+              </div>
+              <div class="row">
+                <div class="col-xs-4"><input type="number" name="quantity_{{s.id}}" disabled></div>
+                <div class="col-xs-4"><input type="number" name="weight_{{s.id}}" disabled></div>
+                <div class="col-xs-4"><input type="number" name="cost_{{s.id}}" disabled></div>
+              </div>
+            </td>
+            {% endfor %}
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              <input type="submit" id="add" name="add" value="Add">
+              <script>
+              $('#add').click(function() {
+                var result_style = document.getElementById('new_fish').style;
+                result_style.display = 'table-row';
+              });
+              </script>
+
+            </td>
+            {% for s in stall %}
+            <td></td>
+            {% endfor %}
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function printDiv(divName) {
+       var printContents = document.getElementById(divName).innerHTML;
+       var originalContents = document.body.innerHTML;
+       document.body.innerHTML = printContents;
+       window.print();
+       document.body.innerHTML = originalContents;
+    }
+  </script>
+
+  <script>
+    $("#myTable").tableHeadFixer({'left' : 1, 'head' : true});
+    {#$(document).ready(function(){#}
+      {#$('#myTable').fixedHeaderTable({footer: false, cloneHeadToFoot: false, fixedColumn: true, width: '6750'});#}
+    {#});#}
+  </script>
+
+</div>
+{% endblock %}

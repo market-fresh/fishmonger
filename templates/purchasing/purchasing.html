@@ -1,0 +1,233 @@
+{% extends "purchasing/home.html" %}
+
+
+{%block css%}
+<link rel="stylesheet" href="http://www.fixedheadertable.com/css/defaultTheme.css" media="screen" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" media="screen" />
+{%endblock%}
+{%block js%}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fixed-header-table/1.3.0/jquery.fixedheadertable.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+{%endblock%}
+
+{% block purchasing %}
+<div class="col-xs-12">
+  <h3>Purchasing Report: </h3>
+  <h4>Purchase Order: {{purchase_order_id}}</h4>
+  <hr>
+  <input type="button" name="print" value="Print">
+  <script>
+    $("input[name=print]").click(function(){
+        $.post("/purchasing/{{user_id}}/print_purchasing/",
+        {
+            csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+            save: 'Print'
+        },
+        function(data, status){
+          myWindow=window.open('','','width=750,height=500');
+          myWindow.document.write(data);
+          myWindow.focus();
+        });
+    });
+  </script>
+  <br><br>
+
+  <div id="report_content" class="table-responsive">
+    <table id="myTable" class="table table-bordered table-hover table-condensed">
+      <thead>
+        <th>Fish</th>
+        {% for s in stall %}
+          <th>{{s.description}}</th>
+        {% endfor %}
+        <th bgcolor="lightblue">Total</th>
+      </thead>
+
+      <tbody>
+        {% for fish in purchase_order %}
+          <tr>
+            <td>{{fish.name}} ({{fish.chinese_name}})</td>
+            {% for value in fish.values %}
+              <td>
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    <tr>
+                      <td>Order</td>
+                      <td>Kg</td>
+                      <td>$</td>
+                    </tr>
+                    <tr>
+                      {% csrf_token %}
+                      <td><input type="number" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></td>
+                      <td><input type="number" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></td>
+                      <td><input type="number" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></td>
+                      <input type="text" name="order_item" value="{{value.order_item}}" hidden>
+                      <script>
+                        $("input[name=quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "quantity",
+                              value: document.getElementsByName('quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+                          },
+                          function(data, status){
+                            window.location.reload();
+                          });
+                        });
+                        $("input[name=weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "weight",
+                              value: document.getElementsByName('weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+
+                          },
+                          function(data, status){
+                            window.location.reload();
+                          });
+                        });
+                        $("input[name=cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
+                          $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                          {
+                              csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                              stall_id: "{{value.stall}}",
+                              order_item_id: "{{value.order_item}}",
+                              key: "cost",
+                              value: document.getElementsByName('cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}')[0].value,
+                              save: 'Save'
+
+                          },
+                          function(data, status){
+                            var table = document.getElementById ("myTable");
+                            console.log(table);
+                            table.refresh ();
+                          });
+                        });
+                      </script>
+                    </tr>
+                  </table>
+                </div>
+              </td>
+            {% endfor %}
+            <td bgcolor="lightblue">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <tr>
+                    <td bgcolor="lightblue">Order</td>
+                    <td bgcolor="lightblue">Kg</td>
+                    <td bgcolor="lightblue">$</td>
+                  </tr>
+                  <tr>
+                    <td bgcolor="lightblue"><input type="number" size=5 name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></td>
+                    <td bgcolor="lightblue"><input type="number" size=5 name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></td>
+                    <td bgcolor="lightblue"><input type="number" size=5 name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></td>
+                    <script>
+                    $("input[name=total_cost_{{fish.id}}]").change(function(){
+                      $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
+                      {
+                          csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                          key: "total_cost",
+                          value: document.getElementsByName('total_cost_{{fish.id}}')[0].value,
+                          save: 'Save'
+
+                      },
+                      function(data, status){
+                        window.location.reload();
+                      });
+                    });
+                    </script>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        <tr id="new_fish" style="display:none;">
+          <td>
+            <table class="table table-bordered">
+              <tr><td>Fish Name</td></tr>
+              <tr>
+                <td><input type="text" name="fish_name"></td>
+                <script>
+                $("input[name=fish_name]").change(function(){
+                  $.post("/purchasing/{{user_id}}/add_fish/{{purchase_order_id}}/",
+                  {
+                      csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                      fish_name: document.getElementsByName('fish_name')[0].value,
+                      save: 'Save'
+
+                  },
+                  function(data, status){
+                    window.location.reload();
+                  });
+                });
+                </script>
+              </tr>
+            </table>
+          </td>
+          {% for s in stall %}
+          <td>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Order</td>
+                  <td>Kg</td>
+                  <td>$</td>
+                </tr>
+                <tr>
+                  <td><input type="number" name="quantity_{{s.id}}" disabled></td>
+                  <td><input type="number" name="weight_{{s.id}}" disabled></td>
+                  <td><input type="number" name="cost_{{s.id}}" disabled></td>
+                </tr>
+              </table>
+            </div>
+          </td>
+          {% endfor %}
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <input type="submit" id="add" name="add" value="Add">
+            <script>
+            $('#add').click(function() {
+              var result_style = document.getElementById('new_fish').style;
+              result_style.display = 'table-row';
+            });
+            </script>
+
+          </td>
+          {% for s in stall %}
+          <td></td>
+          {% endfor %}
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function printDiv(divName) {
+       var printContents = document.getElementById(divName).innerHTML;
+       var originalContents = document.body.innerHTML;
+       document.body.innerHTML = printContents;
+       window.print();
+       document.body.innerHTML = originalContents;
+    }
+  </script>
+
+  <script>
+    $('#myTable').fixedHeaderTable({ footer: false, cloneHeadToFoot: false, fixedColumn: false });
+    {#$(document).ready(function(){#}
+    {#  $('#myTable').DataTable( {#}
+    {#      fixedColumns: true#}
+    {#  } );#}
+    {#});#}
+  </script>
+
+</div>
+{% endblock %}

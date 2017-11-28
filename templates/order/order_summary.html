@@ -1,0 +1,66 @@
+{% extends "order/home.html" %}
+
+{% block order %}
+
+  <br><br>
+
+  <form action = "/order/{{user_id}}/summary/stall/" method="get">
+    Search Stall:
+    <select name="stall_id">
+      <option>All</option>
+      {% for stall in purchase_order%}
+        <option value="{{stall.stall.id}}">{{stall.stall.description}}</option>
+      {% endfor %}
+    </select>
+    {% csrf_token %}
+    <td><input type="submit" name="search" value="Search"></td>
+  </form>
+
+  <div class="table-responsive">
+    <div class="col-xs-12">
+      <h3>Summary: </h3>
+      {% for stall in purchase_order %}
+        <h4>{{stall.stall.description}}</h4>
+        <button data-toggle="collapse" data-target="#demo{{stall.stall.id}}">Show/Hide Stall Order Summary</button>
+        <br><br>
+        {% if summary == True %}
+          <div id="demo{{stall.stall.id}}" class="collapse in">
+        {% else %}
+          <div id="demo{{stall.stall.id}}" class="collapse">
+        {% endif %}
+
+          <table class="table table-bordered">
+            <tr>
+              <td>Order Id</td>
+              <td>Order Status</td>
+              <td>Date Created</td>
+            </tr>
+            {% if stall.order_list %}
+              {% for order in stall.order_list %}
+              <tr>
+                <td><a href="/order/{{user.id}}/order/{{order.order.id}}/">{{order.order.id}}</td>
+                <td>{{order.order.status}}</td>
+                <td>{{order.order.created_date}}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <td>
+                <form action = "/order/{{user_id}}/" method="post">
+                  {% csrf_token %}
+                  <input type="text" name="stall_id" value="{{stall.stall.id}}" hidden>
+                  <input type="submit" name="submit" value="Create Order">
+                </form>
+              </td>
+              <td>No order</td>
+              <td></td>
+            {% endif %}
+          </table>
+
+        </div>
+      {% endfor %}
+    <br>
+    </div>
+  </div>
+
+
+{% endblock %}

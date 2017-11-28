@@ -1,0 +1,73 @@
+{% extends "purchasing/home.html" %}
+
+{% block purchasing %}
+<h3>Purchase Order: {{ purchase_order.order.created_date }}</h3>
+<form action = "/purchase_order_today" method="post">
+  <div class="table-responsive">
+    <div class="col-xs-12">
+        <select name="fish">
+          {% for f in purchase_order.order_item %}
+              <option>{{f.name}}</option>
+          {% endfor%}
+        </select>
+        <select name="stall">
+          <option>All</option>
+          {% for f in purchase_order.order_item %}
+              <option>{{f.stall}}</option>
+          {% endfor%}
+        </select>
+    </div>
+  </div>
+  <br>
+  <div class="col-xs-12">
+  {% csrf_token %}
+  {% if request.user.is_superuser%}
+    <input type="submit" name="search" value="Search">
+  {% endif %}
+</div>
+</form>
+
+<br>
+
+<form action = "" method="post">
+  <div class="table-responsive">
+    <div class="col-xs-12">
+      <table class="table table-bordered">
+        <tr>
+          <td>Fish</td>
+          <td>Quantity</td>
+          <td>Weight</td>
+          <td>Cost</td>
+          <td>Sold</td>
+        </tr>
+        {% for f in fish %}
+          <tr>
+            <td>{{ f.name }}</td>
+            {% if purchase_order.order %}
+              {% for order_item in purchase_order.order_item %}
+                {% if order_item.name == f.name %}
+                  <td><input type="text" name="quantity-{{f.id}}" value="{{ order_item.value }}"></td>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <td>>0</td>
+            {% endif %}
+            <td><input type="text" name="weight-{{f.id}}" ></td>
+            <td><input type="text" name="cost-{{f.id}}" ></td>
+            <td><input type="text" name="sold-{{f.id}}" ></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <br>
+  {% csrf_token %}
+  {% if request.user.is_superuser%}
+    <input type="submit" name="submit" value="Update Purchase Order">
+    <input type="submit" name="print" value="Print">
+  {% endif %}
+
+  <br>
+</form>
+{% endblock %}

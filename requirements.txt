@@ -1,5 +1,6 @@
 Django==1.11.5
 olefile==0.44
 Pillow==4.3.0
+psycopg2==2.7.3.2
 pytz==2017.2
 uWSGI==2.0.15

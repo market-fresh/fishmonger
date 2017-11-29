@@ -24,7 +24,7 @@
                 {% csrf_token %}
                 <td><a href="/order/{{ user.id }}/order/{{order.order.id}}/">{{order.order.id}}</a></td>
                 <td>{{order.order.status}}</td>
-                <td>{{order.order.created_date}}</td>
+                <td>{{order.order.created_date|date:"F d, Y l"}}</td>
                 <input type="text" name="order_id" value="{{order.order.id}}" hidden>
                 <input type="text" name="stall_id" value="{{stall.stall.id}}" hidden>
                 <td><input type="submit" name="save" value="Generate Invoice" {% if order.order.status != 'Purchasing' %}disabled{% endif %}></td>

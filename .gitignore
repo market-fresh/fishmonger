@@ -2,3 +2,5 @@ db.sqlite3
 */migrations/00*.py
 */migrations/*.pyc
 */migrations/__pycache__
+fishmongerapi/settings.py
+fishmongerapi/wsgi.py

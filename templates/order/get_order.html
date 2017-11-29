@@ -5,6 +5,8 @@
     <br>
     <h3>Stall: {{ stall.description }}</h3>
     <h4>Order: {{ order.order.id }} | Status: {{ order.order.status }}</h4>
+    <h4>Date: {{ order.order.created_date|date:"F d, Y l" }}</h4>
+
       <div class="table-responsive">
         <table class="table table-bordered table-hover table-condensed">
           <tr>
@@ -15,7 +17,7 @@
           {% for order_item in order.order_item %}
             <tr>
               <td>{{ order_item.name }}</td>
-              <td><input type="number" name="quantity-{{order_item.id}}" {% if order_item.value %} value="{{order_item.value}}" {%endif%} {% if order.order.status != 'New' %} disabled {% endif %}></td>
+              <td><input type="tel" name="quantity-{{order_item.id}}" {% if order_item.value %} value="{{order_item.value}}" {%endif%} {% if order.order.status != 'New' %} disabled {% endif %}></td>
               <td>{{ order_item.status }}</td>
               <script>
                 $("input[name=quantity-{{order_item.id}}]").change(function(){

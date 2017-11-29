@@ -57,9 +57,9 @@
                     </tr>
                     <tr>
                       {% csrf_token %}
-                      <td><input type="number" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></td>
-                      <td><input type="number" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></td>
-                      <td><input type="number" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></td>
+                      <td><input type="tel" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></td>
+                      <td><input type="tel" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></td>
+                      <td><input type="tel" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></td>
                       <input type="text" name="order_item" value="{{value.order_item}}" hidden>
                       <script>
                         $("input[name=quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
@@ -123,9 +123,9 @@
                     <td bgcolor="lightblue">$</td>
                   </tr>
                   <tr>
-                    <td bgcolor="lightblue"><input type="number" size=5 name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></td>
-                    <td bgcolor="lightblue"><input type="number" size=5 name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></td>
-                    <td bgcolor="lightblue"><input type="number" size=5 name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></td>
+                    <td bgcolor="lightblue"><input type="tel" size=5 name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></td>
+                    <td bgcolor="lightblue"><input type="tel" size=5 name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></td>
+                    <td bgcolor="lightblue"><input type="tel" size=5 name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></td>
                     <script>
                     $("input[name=total_cost_{{fish.id}}]").change(function(){
                       $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
@@ -180,9 +180,9 @@
                   <td>$</td>
                 </tr>
                 <tr>
-                  <td><input type="number" name="quantity_{{s.id}}" disabled></td>
-                  <td><input type="number" name="weight_{{s.id}}" disabled></td>
-                  <td><input type="number" name="cost_{{s.id}}" disabled></td>
+                  <td><input type="tel" name="quantity_{{s.id}}" disabled></td>
+                  <td><input type="tel" name="weight_{{s.id}}" disabled></td>
+                  <td><input type="tel" name="cost_{{s.id}}" disabled></td>
                 </tr>
               </table>
             </div>

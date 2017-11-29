@@ -71,9 +71,9 @@
                       <div class="col-xs-4">$</div>
                     </div>
                     <div class="row">
-                      <div class="col-xs-4"><input type="number" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></div>
-                      <div class="col-xs-4"><input type="number" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></div>
-                      <div class="col-xs-4"><input type="number" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></div>
+                      <div class="col-xs-4"><input type="tel" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></div>
+                      <div class="col-xs-4"><input type="tel" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></div>
+                      <div class="col-xs-4"><input type="tel" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></div>
                       <input type="text" name="order_item" value="{{value.order_item}}" hidden>
                       <script>
                         $("input[name=quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){
@@ -134,9 +134,9 @@
                   <div class="col-xs-4">$</div>
                 </div>
                 <div class="row">
-                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></div>
-                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></div>
-                  <div class="col-xs-4"><input type="number" maxlength="5" size="5" name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></div>
+                  <div class="col-xs-4"><input type="tel" maxlength="5" size="5" name="total_quantity_{{fish.id}}" {% if fish.total.quantity %} value="{{fish.total.quantity}}" {%endif%} disabled></div>
+                  <div class="col-xs-4"><input type="tel" maxlength="5" size="5" name="total_weight_{{fish.id}}" {% if fish.total.weight %} value="{{fish.total.weight}}" {%endif%} disabled></div>
+                  <div class="col-xs-4"><input type="tel" maxlength="5" size="5" name="total_cost_{{fish.id}}" {% if fish.total.cost %} value="{{fish.total.cost}}"{%endif%} ></div>
                   <script>
                   $("input[name=total_cost_{{fish.id}}]").change(function(){
                     $.post("/purchasing/{{user_id}}/purchasing/{{fish.id}}/",
@@ -187,9 +187,9 @@
                 <div class="col-xs-4">$</div>
               </div>
               <div class="row">
-                <div class="col-xs-4"><input type="number" name="quantity_{{s.id}}" disabled></div>
-                <div class="col-xs-4"><input type="number" name="weight_{{s.id}}" disabled></div>
-                <div class="col-xs-4"><input type="number" name="cost_{{s.id}}" disabled></div>
+                <div class="col-xs-4"><input type="tel" name="quantity_{{s.id}}" disabled></div>
+                <div class="col-xs-4"><input type="tel" name="weight_{{s.id}}" disabled></div>
+                <div class="col-xs-4"><input type="tel" name="cost_{{s.id}}" disabled></div>
               </div>
             </td>
             {% endfor %}

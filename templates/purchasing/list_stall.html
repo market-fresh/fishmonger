@@ -19,8 +19,8 @@
             <form action = "/purchasing/{{user_id}}/stall/" method="post">
               <td>{{order_item.name}}</td>
               <td>{{order_item.value}}</td>
-              <td><input type="number" name="weight_{{order_item.id}}" {% if order_item.weight %} value="{{order_item.weight}}" {% endif %}></td>
-              <td><input type="number" name="cost_{{order_item.id}}" {% if order_item.cost %} value="{{order_item.cost}}" {% endif %}></td>
+              <td><input type="tel" name="weight_{{order_item.id}}" {% if order_item.weight %} value="{{order_item.weight}}" {% endif %}></td>
+              <td><input type="tel" name="cost_{{order_item.id}}" {% if order_item.cost %} value="{{order_item.cost}}" {% endif %}></td>
               <td>{{order_item.status}}</td>
               {% if request.user.is_superuser%}
                 {% csrf_token %}

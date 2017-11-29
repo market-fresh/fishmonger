@@ -1,12 +1,11 @@
 {% extends parent_template %}
 
-
 {% block invoice%}
   <div class="col-xs-12">
     <h3>Stall: {{ invoice.stall.description }}</h3>
     <h4>Invoice: {{ invoice.invoice.id }}</h4>
-    <h4>Date: {{ invoice.invoice.created_date }}</h4>
-    
+    <h4>Date: {{ invoice.invoice.created_date|date:"F d, Y l" }}</h4>
+
     <div class="table-responsive">
       <form action="/invoice/{{user_id}}/" method="post">
         <input type="text" name="invoice_id" value="{{invoice.invoice.id}}" hidden>
@@ -22,8 +21,8 @@
             <tr>
               {% if request.user.is_superuser and not print%}
                 <td>{{item.name}}</td>
-                <td><input type="text" size=5 name="weight_{{invoice.invoice.id}}_{{item.id}}" value="{{item.weight}}"></td>
-                <td>$ <input type="text" size=10 name="cost_{{invoice.invoice.id}}_{{item.id}}" value="{{item.cost}}"></td>
+                <td><input type="tel" size=5 name="weight_{{invoice.invoice.id}}_{{item.id}}" value="{{item.weight}}"></td>
+                <td>$ <input type="tel" size=10 name="cost_{{invoice.invoice.id}}_{{item.id}}" value="{{item.cost}}"></td>
                 {% csrf_token %}
                 <script>
                   $("input[name=weight_{{invoice.invoice.id}}_{{item.id}}]").change(function(){
@@ -74,9 +73,9 @@
             <td></td>
             <td>Ice</td>
             {% if invoice.invoice.ice %}
-              <td>$ <input type="text" name="ice_{{invoice.invoice.id}}" value="{{invoice.invoice.ice}}"></td>
+              <td>$ <input type="tel" name="ice_{{invoice.invoice.id}}" value="{{invoice.invoice.ice}}"></td>
             {% else %}
-              <td>$ <input type="text" name="ice_{{invoice.invoice.id}}" value=""></td>
+              <td>$ <input type="tel" name="ice_{{invoice.invoice.id}}" value=""></td>
             {% endif %}
             <td></td>
           </tr>
@@ -84,7 +83,7 @@
             <td></td>
             <td></td>
             <td>Total Cost</td>
-            <td>$ <input type="text" name="cost_{{invoice.invoice.id}}" value="{{invoice.invoice.total_cost}}" disabled></td>
+            <td>$ <input type="tel" name="cost_{{invoice.invoice.id}}" value="{{invoice.invoice.total_cost}}" disabled></td>
             <td></td>
           </tr>
           <tr>
@@ -92,9 +91,9 @@
             <td></td>
             <td>Float</td>
             {% if invoice.invoice.cash_float %}
-              <td>$ <input type="text" name="cash_float_{{invoice.invoice.id}}" value="{{invoice.invoice.cash_float}}"></td>
+              <td>$ <input type="tel" name="cash_float_{{invoice.invoice.id}}" value="{{invoice.invoice.cash_float}}"></td>
             {% else %}
-              <td>$ <input type="text" name="cash_float_{{invoice.invoice.id}}" value=""></td>
+              <td>$ <input type="tel" name="cash_float_{{invoice.invoice.id}}" value=""></td>
             {% endif %}
             <td></td>
           </tr>
@@ -103,9 +102,9 @@
             <td></td>
             <td>Sales</td>
             {% if invoice.invoice.sales %}
-              <td>$ <input type="text" name="sales_{{invoice.invoice.id}}" value="{{invoice.invoice.sales}}"></td>
+              <td>$ <input type="tel" name="sales_{{invoice.invoice.id}}" value="{{invoice.invoice.sales}}"></td>
             {% else %}
-              <td>$ <input type="text" name="sales_{{invoice.invoice.id}}" value=""></td>
+              <td>$ <input type="tel" name="sales_{{invoice.invoice.id}}" value=""></td>
             {% endif %}
             <td></td>
           </tr>

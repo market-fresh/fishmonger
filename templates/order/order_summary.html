@@ -40,7 +40,7 @@
               <tr>
                 <td><a href="/order/{{user.id}}/order/{{order.order.id}}/">{{order.order.id}}</td>
                 <td>{{order.order.status}}</td>
-                <td>{{order.order.created_date}}</td>
+                <td>{{order.order.created_date|date:"F d, Y l"}}</td>
               </tr>
               {% endfor %}
             {% else %}

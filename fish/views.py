@@ -9,7 +9,6 @@ from fish.services import create_fish, search_fish, up_fish, down_fish
 def fish(request):
     if request.method == 'POST':
         if request.POST['submit'] == 'Submit':
-            print('create')
             context = create_fish(request)
 
         elif request.POST['submit'] == 'Up':

@@ -82,6 +82,7 @@
       <input type="text" name="stall_id" value="{{stall.id}}" hidden>
       <input type="text" name="order_id" value="{{order.order.id}}" hidden>
       {% if order.order.status == 'New' %}
+        <input type="submit" name="submit" value="Save">
         <input type="submit" name="submit" value="Cancel">
         <input type="submit" name="submit" value="Submit for Purchasing">
       {% endif %}

@@ -7,7 +7,8 @@ def create_fish(request):
     form = FishForm(request.POST)
     if form.is_valid():
         cd = form.save(commit=False)
-        cd.sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max'] + 1
+        max_sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max']
+        cd.sequence = max_sequence + 1 if max_sequence else 1
         cd.save()
     fish = Fish.objects.all().order_by('sequence')
 

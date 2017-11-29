@@ -81,10 +81,11 @@ def create_order(request, user):
     return order
 
 def save_order(request, user):
-    order_item_id = request.POST['order_item_id']
-    value = request.POST['value']
-    order_item = Order_Item.objects.filter(id=order_item_id)
-    order_item.update(quantity=value)
+    if 'order_item_id' in request.POST:
+        order_item_id = request.POST['order_item_id']
+        value = request.POST['value']
+        order_item = Order_Item.objects.filter(id=order_item_id)
+        order_item.update(quantity=value)
     return
 
 def post_order_submit_po(request, user):

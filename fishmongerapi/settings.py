@@ -80,13 +80,18 @@ WSGI_APPLICATION = 'fishmongerapi.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
+    #'default': {
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'fishmonger',
+    #    'USER': 'fishmonger',
+    #    'PASSWORD': 'fishmonger',
+    #    'HOST': 'fishmonger.czbfcnm9psao.us-east-2.rds.amazonaws.com',
+    #    'PORT': '5432',
+    #}
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-    #marketfresh.mysql.pythonanywhere-services.com
-    #marketfresh
-    #PansFish.2017
 }
 
 

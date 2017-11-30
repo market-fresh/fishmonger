@@ -65,14 +65,14 @@
 									<div style="position: relative; z-index: 40;">
 	                  <div class="container-fluid">
 	                    <div class="row">
-	                      <span class="col-xs-4">Order</span>
-	                      <span class="col-xs-4">Kg</span>
-	                      <span class="col-xs-4">$</span>
+	                      <div class="col-xs-4">Order</div>
+	                      <div class="col-xs-4">Kg</div>
+	                      <div class="col-xs-4">$</div>
 	                    </div>
 	                    <div class="row" style="position: relative; z-index: 40;">
-	                      <span class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></span>
-	                      <span class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></span>
-	                      <span class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></span>
+	                      <div class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.quantity %} value="{{value.quantity}}" {%endif%}></div>
+	                      <div class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.weight %} value="{{value.weight}}"{%endif%}></div>
+	                      <div class="col-xs-4" style="z-index: 30;"><input type="tel" size=5 name="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}" {% if value.cost %} value="{{value.cost}}"{%endif%}></div>
 	                      <input type="text" name="order_item" value="{{value.order_item}}" hidden>
 	                      <script>
 	                        $("input[name=quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}]").change(function(){

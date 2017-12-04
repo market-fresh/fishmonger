@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, {'next_page': '/home/'}, name='logout'),
     url(r'^signup/$', signup, name='signup'),
 
+    url(r'^s$', home),
     url(r'^home/$', home),
     url(r'^fish/$', fish),
     url(r'^fish/delete/(?P<fish_id>\d+)/$', delete_fish),

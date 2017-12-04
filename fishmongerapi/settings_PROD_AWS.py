@@ -25,7 +25,7 @@ SECRET_KEY = 'o#u4x*c-)f&rsb0d%6*b9n!^ty=^#2qz8%dp%@&6w(+os7)#8x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-18-221-154-19.us-east-2.compute.amazonaws.com','fishmonger.czbfcnm9psao.us-east-2.rds.amazonaws.com']
+ALLOWED_HOSTS = ['ec2-18-221-154-19.us-east-2.compute.amazonaws.com','ec2-18-217-10-229.us-east-2.compute.amazonaws.com','fishmonger.czbfcnm9psao.us-east-2.rds.amazonaws.com']
 
 
 # Application definition

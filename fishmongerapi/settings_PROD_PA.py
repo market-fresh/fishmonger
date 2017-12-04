@@ -91,7 +91,7 @@ DATABASES = {
     #    'PASSWORD': 'fishmonger',
     #    'HOST': 'fishmonger.czbfcnm9psao.us-east-2.rds.amazonaws.com',
     #    'PORT': '5432',
-    }
+    #}
     #'default': {
     #    'ENGINE': 'django.db.backends.mysql',
     #    'NAME': 'fishmonger',

@@ -188,7 +188,7 @@ def purchasing_report(request, user_id):
     purchase_order_id = purchase_order[0]['purchase_order']
     stall, purchase_order = generate_purchasing_list(purchase_order)
 
-    template = 'purchasing/purchasing.html'
+    template = 'purchasing/purchasing_trial.html'
     context = { 'purchase_order': purchase_order,
                 'purchase_order_id': purchase_order_id,
                 'stall' : stall,

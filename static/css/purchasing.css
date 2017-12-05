@@ -1,0 +1,68 @@
+#parent {
+  height: 675px;
+}
+
+#myTable {
+  width: 250em !important;
+  border-collapse: separate;
+}
+
+#new_fish {
+  display: none;
+}
+
+{#style for header#}
+th {
+    height: 50px;
+    text-align: center;
+    vertical-align: center;
+    background-color: black;
+    color: white;
+    position: relative;
+    z-index: 60;
+}
+
+{#style for header totals#}
+th:last-child, tr:nth-child(2) th:nth-last-child(3), tr:nth-child(2) th:nth-last-child(2) {
+    background-color: lightblue;
+    color: black;
+}
+
+{#style for generic td#}
+td {
+    height: 25px;
+    width: 100em;
+    z-index: 30;
+}
+
+{#style for content text alignment#}
+td:not(:first-child) {
+    text-align: center;
+    vertical-align: center;
+}
+
+{#style of the fish names#}
+td:first-child {
+    background-color: black;
+    color: white;
+    position: relative;
+    z-index: 50;
+}
+
+{#style of the Add button and fish name field#}
+tr:last-child td:first-child, tr:nth-last-child(2) td:first-child  {
+    background-color: white;
+    color: black;
+}
+
+{#style for totals#}
+td:last-child,  td:nth-last-child(2), td:nth-last-child(3), tr:not(:last-child) td:nth-last-child(4) {
+    background-color: lightblue;
+    color: black;
+}
+
+{#style fix for new_fish row#}
+tr:nth-last-child(2) td:nth-last-child(4){
+  background-color: white;
+  color: black;
+}

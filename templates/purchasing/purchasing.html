@@ -1,72 +1,12 @@
 {% extends "purchasing/home.html" %}
 {% load static %}
 
-{%block js%}
-<script src="{% static 'js/tableHeadFixer.js' %}"></script>
+{%block css%}
+<link rel="stylesheet" href="{% static 'css/purchasing.css' %}">
 {%endblock%}
 
-{%block head%}
-		<style>
-			#parent {
-				height: 675px;
-			}
-
-			#myTable {
-				width: 350em !important;
-				border-collapse: separate;
-			}
-
-			{#style for header#}
-			th {
-			    height: 50px;
-					text-align: center;
-					vertical-align: center;
-					background-color: black;
-					color: white;
-			}
-
-			{#style for header totals#}
-			th:last-child, tr:nth-child(2) th:nth-last-child(3), tr:nth-child(2) th:nth-last-child(2) {
-			    background-color: lightblue;
-					color: black;
-			}
-
-			{#style for generic td#}
-			td {
-			    height: 25px;
-			}
-
-			{#style for content text alignment#}
-			td:not(:first-child) {
-					text-align: center;
-					vertical-align: center;
-			}
-
-			{#style of the fish names#}
-			td:first-child {
-			    background-color: black;
-					color: white;
-			}
-
-			{#style of the Add button and fish name field#}
-			tr:last-child td:first-child, tr:nth-last-child(2) td:first-child  {
-			    background-color: white;
-					color: black;
-			}
-
-			{#style for totals#}
-			td:last-child,  td:nth-last-child(2), td:nth-last-child(3), tr:not(:last-child) td:nth-last-child(4) {
-			    background-color: lightblue;
-					color: black;
-			}
-
-			{#style fix for new_fish row#}
-			tr:nth-last-child(2) td:nth-last-child(4){
-				background-color: white;
-				color: black;
-			}
-
-		</style>
+{%block js%}
+<script src="{% static 'js/tableHeadFixer.js' %}"></script>
 {%endblock%}
 
 {% block purchasing_report %}
@@ -96,18 +36,18 @@
       <table id="myTable" class="table table-bordered table-hover">
         <thead>
           <tr>
-            <th  style="position: relative; z-index: 70;">Fish</th>
+            <th>Fish</th>
             {% for s in stall %}
-              <th colspan="3" style="position: relative; z-index: 60;">{{s.description}}</th>
+              <th colspan="3">{{s.description}}</th>
             {% endfor %}
-            <th colspan="3" style="position: relative; z-index: 60;">Total</th>
+            <th colspan="3">Total</th>
           </tr>
 					<tr align="center">
-            <th bgcolor="black" style="position: relative; z-index: 60;"></th>
+            <th></th>
             {% for s in stall %}
-							<th bgcolor="black" style="position: relative; z-index: 60;">Order</th>
-							<th bgcolor="black" style="position: relative; z-index: 60;">Kg</th>
-							<th bgcolor="black" style="position: relative; z-index: 60;">$</th>
+							<th>Order</th>
+							<th>Kg</th>
+							<th>$</th>
             {% endfor %}
 						<th>Order</th>
 						<th>Kg</th>
@@ -118,12 +58,12 @@
         <tbody>
           {% for fish in purchase_order %}
             <tr>
-              <td style="position: relative; z-index: 50;">{{fish.name}} ({{fish.chinese_name}})</td>
+              <td>{{fish.name}} ({{fish.chinese_name}})</td>
 							{% for value in fish.values %}
 								{% csrf_token %}
-									<td contenteditable style="z-index: 30;" id="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.quantity %} {{value.quantity}} {%endif%}</td>
-									<td contenteditable style="z-index: 30;" id="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.weight %} {{value.weight}} {%endif%}</td>
-	                <td contenteditable style="z-index: 30;" id="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.cost %} {{value.cost}} {%endif%}</td>
+									<td contenteditable id="quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.quantity %} {{value.quantity}} {%endif%}</td>
+									<td contenteditable id="weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.weight %} {{value.weight}} {%endif%}</td>
+	                <td contenteditable id="cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}">{% if value.cost %} {{value.cost}} {%endif%}</td>
 
                   <input type="text" name="order_item" value="{{value.order_item}}" hidden>
                   <script>
@@ -135,8 +75,8 @@
 											var current_value = {{value.quantity}};
 											var new_value = quantity_{{value.stall}}_{{fish.id}}_{{value.order_item}}.innerHTML;
 
-											if (new_value == ''){
-												new_value = 0
+											if (new_value == '' || new_value == '<br>'){
+												new_value = 0;
 											}
 
 											if (current_value != new_value) {
@@ -148,10 +88,7 @@
 	                          key: "quantity",
 	                          value: new_value,
 	                          save: 'Save'
-	                      },
-												function(data, status){
-													window.location.reload();
-												});
+	                      });
 											}
 										});
 
@@ -159,8 +96,8 @@
 											var current_value = {{value.weight}};
 											var new_value = weight_{{value.stall}}_{{fish.id}}_{{value.order_item}}.innerHTML;
 
-											if (new_value == ''){
-												new_value = 0
+											if (new_value == '' || new_value == '<br>'){
+												new_value = 0;
 											}
 
 											if (current_value != new_value) {
@@ -172,21 +109,16 @@
 	                          key: "weight",
 	                          value: new_value,
 	                          save: 'Save'
-
-	                      },
-												function(data, status){
-													window.location.reload();
-												});
+	                      });
 											}
-
 										});
 
 										cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}.addEventListener('blur', function(){
 											var current_value = {{value.cost}};
 											var new_value = cost_{{value.stall}}_{{fish.id}}_{{value.order_item}}.innerHTML;
 
-											if (new_value == ''){
-												new_value = 0
+											if (new_value == '' || new_value == '<br>'){
+												new_value = 0;
 											}
 
 											if (current_value != new_value) {
@@ -198,11 +130,7 @@
 	                          key: "cost",
 	                          value: new_value,
 	                          save: 'Save'
-
-	                      },
-												function(data, status){
-													window.location.reload();
-												});
+	                      });
 											}
 										});
                   </script>
@@ -219,7 +147,7 @@
 									var current_value = {{fish.total.cost}};
 									var new_value = total_cost_{{fish.id}}.innerHTML;
 
-									if (new_value == ''){
+									if (new_value == '' || new_value == '<br>'){
 										new_value = 0
 									}
 
@@ -240,14 +168,12 @@
             </tr>
           {% endfor %}
 
-					<tr id="new_fish" style="display:none;">
-						{#<td contenteditable><div id="fish_name">Enter Fish name</div></td>#}
+					<tr id="new_fish" >
 						<td contenteditable id="fish_name">Enter Fish name</td>
 
             <script>
 							var fish_name = document.getElementById('fish_name');
 							fish_name.addEventListener('blur', function(){
-
 								$.post("/purchasing/{{user_id}}/add_fish/{{purchase_order_id}}/",
 	              {
 	                  csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,

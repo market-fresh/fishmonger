@@ -171,12 +171,16 @@ def save_distributed_fish(request, purchase_order_id, fish_id):
 
 #Save purchasing details done from the fish report
 def save_purchased_fish(purchase_order, purchase_order_item_id, weight, cost):
+    weight = 0 if weight == '' else weight
+    cost = 0 if cost == '' else cost
     purchase_order_item = Purchase_Order_Item.objects.filter(id=purchase_order_item_id)
     purchase_order_item.update(weight=weight, buying_cost=cost)
     fish = purchase_order_item[0].fish
 
 #Save purchasing details done from the stall report
 def save_stall(purchase_order, order_item_id, weight, cost):
+    weight = 0 if weight == '' else weight
+    cost = 0 if cost == '' else cost
     order_item = Order_Item.objects.filter(id=order_item_id)
     order_item.update(weight=weight, cost=cost)
 

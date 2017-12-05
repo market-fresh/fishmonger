@@ -12,7 +12,6 @@
 			}
 
 			#myTable {
-				table-layout: fixed;
 				width: 350em !important;
 				border-collapse: separate;
 			}
@@ -248,7 +247,7 @@
             <script>
 							var fish_name = document.getElementById('fish_name');
 							fish_name.addEventListener('blur', function(){
-								
+
 								$.post("/purchasing/{{user_id}}/add_fish/{{purchase_order_id}}/",
 	              {
 	                  csrfmiddlewaretoken: document.getElementsByName('csrfmiddlewaretoken')[0].value,

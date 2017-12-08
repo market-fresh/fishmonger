@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o#u4x*c-)f&rsb0d%6*b9n!^ty=^#2qz8%dp%@&6w(+os7)#8x'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -80,27 +80,14 @@ WSGI_APPLICATION = 'fishmongerapi.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    #}
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'fishmonger',
-        'USER': 'fishmonger',
-        'PASSWORD': 'fishmonger',
-        'HOST': 'fishmonger.czbfcnm9psao.us-east-2.rds.amazonaws.com',
-        'PORT': '5432',
+        'NAME': os.environ['AWS_PROD_RDS_NAME'],
+        'USER': os.environ['AWS_PROD_RDS_USER'],
+        'PASSWORD': os.environ['AWS_PROD_RDS_PASSWORD'],
+        'HOST': os.environ['AWS_PROD_RDS_HOST'],
+        'PORT': os.environ['AWS_PROD_RDS_PORT'],
     }
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'fishmonger',
-    #    'USER': 'marketfresh',
-    #    'PASSWORD': 'PansFish.2017',
-    #    'HOST': 'marketfresh.mysql.pythonanywhere-services.com',
-    #    'PORT': '5432',
-    #}
-
 }
 
 

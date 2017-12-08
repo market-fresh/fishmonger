@@ -1,4 +1,6 @@
 ./db.sqlite3
+./delete_migrations
+./README.md
 */migrations/00*.py
 */migrations/*.pyc
-*/migrations/__pycache__
+./.env

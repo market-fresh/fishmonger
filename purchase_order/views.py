@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from fish.forms import FishForm
@@ -14,6 +15,7 @@ from purchase_order.services import generate_po_by_stall, generate_po_by_fish, g
 from purchase_order.services import save_stall, save_purchased_fish, save_distributed_fish, create_new_fish
 
 # Create your views here.
+@login_required(login_url="/login/")
 def purchasing(request, user_id, fish_id=None):
     if request.method == 'POST':
         template, context = post_purchase_order(request, user_id, fish_id)
@@ -181,6 +183,7 @@ def save(request, user_id, request_type, purchase_order):
                 }
     return template, context
 
+@login_required(login_url="/login/")
 def purchasing_report(request, user_id):
     User = get_user_model()
     user = User.objects.get(id=user_id)
@@ -198,6 +201,7 @@ def purchasing_report(request, user_id):
 
     return render(request, template, context)
 
+@login_required(login_url="/login/")
 def print_purchasing_report(request, user_id):
     User = get_user_model()
     user = User.objects.get(id=user_id)
@@ -215,6 +219,7 @@ def print_purchasing_report(request, user_id):
 
     return render(request, template, context)
 
+@login_required(login_url="/login/")
 def add_fish_from_po(request, user_id, purchase_order_id):
     fish_name = request.POST['fish_name']
     create_new_fish(fish_name, purchase_order_id)

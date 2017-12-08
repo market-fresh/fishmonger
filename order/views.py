@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from fish.models import Fish
@@ -12,6 +13,7 @@ from order.services import generate_order_list, generate_order_item_list
 from order.services import create_order, save_order, post_order_submit_po, create_new_fish
 
 # Create your views here.
+@login_required(login_url="/login/")
 def order_all(request, user_id, stall_id=None):
     if request.method == 'POST':
         template, context = post_order(request, user_id)
@@ -28,6 +30,7 @@ def order_all(request, user_id, stall_id=None):
     #return render(request, 'order/order.html', context)
     return render(request, template, context)
 
+@login_required(login_url="/login/")
 def order_by_id(request, user_id, order_id=None):
     if request.method == 'POST':
         template, context = post_order(request, user_id, order_id)
@@ -41,7 +44,7 @@ def order_by_id(request, user_id, order_id=None):
     #return render(request, 'order/order.html', context)
     return render(request, template, context)
 
-
+@login_required(login_url="/login/")
 def order_summary(request, user_id):
     template = 'order/order_summary.html'
     context = { 'purchase_order': generate_stall_orders_list(request, user_id, status__in=['New','Submitted', 'Purchasing','Invoiced','Closed', 'Cancelled']),
@@ -131,6 +134,7 @@ def post_order(request, user_id, order_id=None):
 
     return template, context
 
+@login_required(login_url="/login/")
 def cancel_order(request, user=None):
     order_id = request.POST['order_id']
     user_id = user.id if user else request.POST['user_id']
@@ -142,6 +146,7 @@ def cancel_order(request, user=None):
     template, context = get_order(request, user_id, True)
     return render(request, template, context)
 
+@login_required(login_url="/login/")
 def add_fish_from_order(request, user_id):
     fish_name = request.POST['fish_name']
     create_new_fish(fish_name)

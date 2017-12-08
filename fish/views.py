@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from fish.forms import FishForm
@@ -6,6 +7,7 @@ from fish.models import Fish
 from fish.services import create_fish, search_fish, up_fish, down_fish
 
 # Create your views here.
+@login_required(login_url="/login/")
 def fish(request):
     if request.method == 'POST':
         if request.POST['submit'] == 'Submit':
@@ -22,6 +24,7 @@ def fish(request):
 
     return render(request, 'fish/fish.html', context)
 
+@login_required(login_url="/login/")
 def delete_fish(request, fish_id):
     form = FishForm()
     sequence = int(request.POST['sequence'])
@@ -37,7 +40,7 @@ def delete_fish(request, fish_id):
     context = {'form': form, 'fish': Fish.objects.all().order_by('sequence')}
     return render(request, 'fish/fish.html', context)
 
-
+@login_required(login_url="/login/")
 def update_fish(request, fish_id):
     form = FishForm(request.POST or None)
     if form.is_valid():

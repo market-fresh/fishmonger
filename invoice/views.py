@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from order.services import generate_stall_orders_list, check_exists_order_list
@@ -6,6 +7,7 @@ from invoice.services import generate_invoice_list, generate_invoice_of_stall, c
 from invoice.services import save_invoice, close_invoice, calculate_total_cost
 
 # Create your views here.
+@login_required(login_url="/login/")
 def invoice(request, user_id):
     User = get_user_model()
     user = User.objects.get(id=user_id)

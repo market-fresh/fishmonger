@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from stall.forms import StallForm
 from stall.models import Stall
 
 # Create your views here.
+@login_required(login_url="/login/")
 def stall(request):
     if request.method == 'POST':
         form = StallForm(request.POST)
@@ -21,12 +23,14 @@ def stall(request):
             stall = Stall.objects.all()
         return render(request, 'stall/stall.html', {'form': form, 'stall': stall, 'query': q})
 
+@login_required(login_url="/login/")
 def update_stall(request, stall_id):
     stall = Stall.objects.get(id=stall_id)
     stall.description = request.POST['description']
     stall.save()
     return render(request, 'stall/stall.html', {'status': 'success'})
 
+@login_required(login_url="/login/")
 def delete_stall(request, stall_id):
     form = StallForm()
     stall = Stall.objects.get(id=stall_id)

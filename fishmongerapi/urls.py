@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
-from core.views import home, signup
+from core.views import home, signup, change_password
 from fish.views import fish, delete_fish, update_fish
 from stall.views import stall, delete_stall, update_stall
 from order.views import order_all, order_by_id, order_summary, cancel_order, add_fish_from_order
@@ -28,6 +28,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/home/'}, name='logout'),
+    url(r'^change_password/$', change_password, {'next_page': '/login/'}, name='change_password'),
+    url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
+    url(r'^password_reset/done/$', auth_views.logout, {'next_page': '/home/'}, name='password_reset_done'),
     url(r'^signup/$', signup, name='signup'),
 
     url(r'^s$', home),

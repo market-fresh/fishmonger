@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/home/'}, name='logout'),
-    url(r'^change_password/$', change_password, {'next_page': '/login/'}, name='change_password'),
+    url(r'^change_password/$', change_password, name='change_password'),
     url(r'^password_reset/$', auth_views.password_reset, name='password_reset'),
     url(r'^password_reset/done/$', auth_views.logout, {'next_page': '/home/'}, name='password_reset_done'),
     url(r'^signup/$', signup, name='signup'),

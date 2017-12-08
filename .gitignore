@@ -1,6 +1,9 @@
-.db.sqlite3
-.delete_migrations
+db.sqlite3
+delete_migrations
 README.md
 */migrations/00*.py
 */migrations/*.pyc
+*/migrations/.DS_Store
+templates/*/.DS_Store
 .env
+.DS_Store

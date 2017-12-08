@@ -1,6 +1,6 @@
-./db.sqlite3
-./delete_migrations
-./README.md
+.db.sqlite3
+.delete_migrations
+README.md
 */migrations/00*.py
 */migrations/*.pyc
-./.env
+.env

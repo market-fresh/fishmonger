@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get['DJANGO_SECRET_KEY']
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'fishmongerapi.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get['AWS_PROD_RDS_NAME'],
-        'USER': os.environ.get['AWS_PROD_RDS_USER'],
-        'PASSWORD': os.environ.get['AWS_PROD_RDS_PASSWORD'],
-        'HOST': os.environ.get['AWS_PROD_RDS_HOST'],
-        'PORT': os.environ.get['AWS_PROD_RDS_PORT'],
+        'NAME': os.environ['AWS_PROD_RDS_NAME'],
+        'USER': os.environ['AWS_PROD_RDS_USER'],
+        'PASSWORD': os.environ['AWS_PROD_RDS_PASSWORD'],
+        'HOST': os.environ['AWS_PROD_RDS_HOST'],
+        'PORT': os.environ['AWS_PROD_RDS_PORT'],
     }
 }
 

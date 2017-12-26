@@ -1,6 +1,6 @@
 from django.db.models import Max
 
-from core.services import get_orders
+from core.services import get_orders, create_fish_in_items
 
 from fish.models import Fish
 from stall.models import Stall
@@ -16,6 +16,8 @@ def generate_order_item_list(model, *args, **kwargs):
         order_item_dict = dict()
         order_item_dict['id'] = oi.id
         order_item_dict['name'] = oi.fish.name + ' (' + oi.fish.chinese_name + ')'
+        #Fix sequencing of the fish here
+        order_item_dict['sequence'] = oi.fish.sequence
         order_item_dict['value'] =  oi.quantity
         order_item_dict['weight'] = oi.weight
         if model == Purchase_Order_Item:
@@ -25,9 +27,11 @@ def generate_order_item_list(model, *args, **kwargs):
             order_item_dict['cost'] =  oi.cost
         if model == Order_Item:
             order_item_dict['status'] = oi.status
+
         order_item_list.append(order_item_dict)
 
-    return order_item_list
+        #Fix sequencing of the fish here
+    return sorted(order_item_list, key=lambda k: k['sequence'])
 
 #Order list for a specified stll
 def generate_order_list(day=None, *args, **kwargs):
@@ -105,12 +109,5 @@ def check_exists_order_list(orders_list):
 def create_new_fish(fish_name):
     sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max'] + 1
     fish = Fish.objects.create(name=fish_name, sequence=sequence)
-    order_set = Order.objects.filter(status__in=['New','Submitted', 'Purchasing'])
-    for order in order_set:
-        Order_Item.objects.create(order=order, fish=fish, status='Purchasing', quantity=0)
-    purchase_order_set = order_set.values('purchase_order').distinct()
-    for purchase_order in purchase_order_set:
-        purchase_order_id = purchase_order['purchase_order']
-        if purchase_order_id:
-            purchase_order = Purchase_Order.objects.get(id=purchase_order_id)
-            Purchase_Order_Item.objects.create(purchase_order=purchase_order, fish=fish)
+
+    create_fish_in_items(fish)

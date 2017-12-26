@@ -1,7 +1,7 @@
 from django.db.models import Max
 from operator import itemgetter
 
-from core.services import get_orders
+from core.services import get_orders, create_fish_in_items
 from order.services import generate_order_item_list
 
 from fish.models import Fish
@@ -140,6 +140,7 @@ def save_distributed_fish(request, purchase_order_id, fish_id):
     else:
         stall_id = request.POST['stall_id']
         order_item_id = request.POST['order_item_id'] if request.POST['order_item_id'] != 'None' else None
+
         #Update with existing order
         if order_item_id:
             order_item = Order_Item.objects.filter(id=order_item_id)
@@ -155,19 +156,35 @@ def save_distributed_fish(request, purchase_order_id, fish_id):
         else:
             purchase_order = Purchase_Order.objects.get(id=purchase_order_id)
             stall = Stall.objects.get(id=stall_id)
-            order = Order.objects.create(stall=stall, status='Purchasing', purchase_order=purchase_order)
-            fishes = Fish.objects.all()
+            order = get_or_none(Order, 'get', stall=stall, status='Purchasing', purchase_order=purchase_order)
 
-            for fish in fishes:
-                if str(fish.id) == fish_id:
-                    if key == 'quantity':
-                        Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', quantity=value)
-                    elif key == 'weight':
-                        Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', weight=value)
-                    elif key == 'cost':
-                        Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', cost=value)
-                else:
-                    Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', quantity=0)
+            #Update with existing order but front end has not been refreshed with order item ids
+            if order:
+                fish = Fish.objects.get(id=fish_id)
+                order_item = Order_Item.objects.filter(order=order, fish=fish)
+
+                if key == 'quantity':
+                    order_item.update(quantity=value)
+                elif key == 'weight':
+                    order_item.update(weight=value)
+                elif key == 'cost':
+                    order_item.update(cost=value)
+
+            #Update without existing order
+            else:
+                order = Order.objects.create(stall=stall, status='Purchasing', purchase_order=purchase_order)
+                fishes = Fish.objects.all()
+
+                for fish in fishes:
+                    if str(fish.id) == fish_id:
+                        if key == 'quantity':
+                            Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', quantity=value)
+                        elif key == 'weight':
+                            Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', weight=value)
+                        elif key == 'cost':
+                            Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', cost=value)
+                    else:
+                        Order_Item.objects.create(order=order, fish=fish, status= 'Purchasing', quantity=0)
 
 #Save purchasing details done from the fish report
 def save_purchased_fish(purchase_order, purchase_order_item_id, weight, cost):
@@ -218,8 +235,4 @@ def check_order_item_completion(order):
 def create_new_fish(fish_name, purchase_order_id):
     sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max'] + 1
     fish = Fish.objects.create(name=fish_name, sequence=sequence)
-    purchase_order = Purchase_Order.objects.get(id=purchase_order_id)
-    Purchase_Order_Item.objects.create(purchase_order=purchase_order, fish=fish)
-    orders = Order.objects.filter(purchase_order=purchase_order)
-    for order in orders:
-        Order_Item.objects.create(order=order, fish=fish, status='Purchasing', quantity=0)
+    create_fish_in_items(fish)

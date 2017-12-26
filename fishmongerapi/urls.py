@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^fish/delete/(?P<fish_id>\d+)/$', delete_fish),
     url(r'^fish/update/(?P<fish_id>\d+)/$', update_fish),
     url(r'^search_fish/$', fish),
+    
     url(r'^stall/$', stall),
     url(r'^stall/delete/(?P<stall_id>\d+)/$', delete_stall),
     url(r'^stall/(?P<stall_id>\d+)/$', update_stall),

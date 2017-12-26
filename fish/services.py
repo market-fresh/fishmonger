@@ -3,6 +3,8 @@ from django.db.models import Max
 from fish.forms import FishForm
 from fish.models import Fish
 
+from core.services import create_fish_in_items
+
 def create_fish(request):
     form = FishForm(request.POST)
     if form.is_valid():
@@ -10,6 +12,9 @@ def create_fish(request):
         max_sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max']
         cd.sequence = max_sequence + 1 if max_sequence else 1
         cd.save()
+        
+        create_fish_in_items(cd)
+
     fish = Fish.objects.all().order_by('sequence')
 
     return {'form': form, 'fish': fish, 'save': True}

@@ -6,13 +6,17 @@ from fish.models import Fish
 from core.services import create_fish_in_items
 
 def create_fish(request):
+    """
+    Service to handle the creation of new fish inventory
+    """
+
     form = FishForm(request.POST)
     if form.is_valid():
         cd = form.save(commit=False)
         max_sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max']
         cd.sequence = max_sequence + 1 if max_sequence else 1
         cd.save()
-        
+
         create_fish_in_items(cd)
 
     fish = Fish.objects.all().order_by('sequence')
@@ -20,6 +24,10 @@ def create_fish(request):
     return {'form': form, 'fish': fish, 'save': True}
 
 def search_fish(request):
+    """
+    Service to handle search of fish in inventory
+    """
+
     form = FishForm()
     if 'q' in request.GET:
         q = request.GET['q']
@@ -31,6 +39,10 @@ def search_fish(request):
     return {'form': form, 'fish': fish, 'query': q}
 
 def up_fish(request):
+    """
+    Service to handle moving up of the sequence of the fish in the inventory
+    """
+
     form = FishForm()
     fish_id = request.POST['id']
     sequence = int(request.POST['sequence'])
@@ -46,6 +58,10 @@ def up_fish(request):
     return {'form': form, 'fish': Fish.objects.all().order_by('sequence')}
 
 def down_fish(request):
+    """
+    Service to handle moving down of the sequence of the fish in the inventory
+    """
+    
     form = FishForm()
     fish_id = request.POST['id']
     sequence = int(request.POST['sequence'])

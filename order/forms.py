@@ -1,6 +1,8 @@
 from django.forms import ModelForm, Form, formset_factory
 from order.models import Order, Order_Item
 
+##### NOT USED IN CURRENT IMPLEMENTATION #####
+
 #class OrderForm(ModelForm):
 #    stall = models.ForeignKey('stall.Stall', on_delete=models.CASCADE)
 #    status = models.CharField(max_length=50, blank=True, default='')

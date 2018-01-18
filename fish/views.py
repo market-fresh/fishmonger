@@ -9,6 +9,10 @@ from fish.services import create_fish, search_fish, up_fish, down_fish
 # Create your views here.
 @login_required(login_url="/login/")
 def fish(request):
+    """
+    View to handle fish related user requests
+    """
+
     if request.method == 'POST':
         if request.POST['submit'] == 'Submit':
             context = create_fish(request)
@@ -26,6 +30,10 @@ def fish(request):
 
 @login_required(login_url="/login/")
 def delete_fish(request, fish_id):
+    """
+    View to handle user request to delete fish from inventory
+    """
+
     form = FishForm()
     sequence = int(request.POST['sequence'])
     fish = Fish.objects.filter(id=fish_id, sequence=sequence)
@@ -42,6 +50,10 @@ def delete_fish(request, fish_id):
 
 @login_required(login_url="/login/")
 def update_fish(request, fish_id):
+    """
+    View to handle user request to update fish details in inventory
+    """
+
     form = FishForm(request.POST or None)
     if form.is_valid():
         fish = Fish.objects.get(id=fish_id)

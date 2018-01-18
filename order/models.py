@@ -7,11 +7,19 @@ from purchase_order.models import Purchase_Order
 from stall.models import Stall
 
 class Order(TimeStampedModel):
+    """
+    Model class definition of Order model
+    """
+
     stall = models.ForeignKey('stall.Stall', on_delete=models.CASCADE)
     status = models.CharField(max_length=50, default='')
     purchase_order = models.ForeignKey('purchase_order.Purchase_Order', null=True, on_delete=models.CASCADE)
 
 class Order_Item(TimeStampedModel):
+    """
+    Model class definition of Order Item model
+    """
+
     order = models.ForeignKey('Order', on_delete=models.CASCADE)
     fish = models.ForeignKey('fish.Fish', on_delete=models.CASCADE)
     status = models.CharField(max_length=50, default='')

@@ -14,6 +14,9 @@ from order.services import generate_stall_orders_list
 
 #Generate purchase order based on submitted orders
 def generate_purchase_order(request, user_id):
+    """
+    Service to handle the generation of purchase order.
+    """
     stall_orders = generate_stall_orders_list(request, user_id)
     purchase_order = Purchase_Order.objects.create()
 
@@ -48,6 +51,12 @@ def generate_purchase_order(request, user_id):
 
 #Generate the fish report
 def generate_po_by_fish(purchase_order):
+    """
+    Service to handle the generation of purchase order by fish.
+
+    Returns a dictionary of orders by fish for the purchase order
+    """
+
     purchase_order_dict = dict()
     purchase_order_dict['purchase_order'] = Purchase_Order.objects.get(id=purchase_order)
     purchase_order_dict['order_item'] = generate_order_item_list(Purchase_Order_Item, purchase_order=purchase_order)
@@ -55,6 +64,12 @@ def generate_po_by_fish(purchase_order):
 
 #Generate the stall report
 def generate_po_by_stall(purchase_order, stall=None):
+    """
+    Service to handle the generation of purchase order by stall.
+
+    Returns a dictionary of orders by stall for the purchase order
+    """
+
     purchase_order_dict = dict()
 
     purchase_order_dict['purchase_order'] = Purchase_Order.objects.get(id=purchase_order)
@@ -74,11 +89,18 @@ def generate_po_by_stall(purchase_order, stall=None):
 
 #Generate the purchasing report
 def generate_purchasing_list(purchase_order):
+    """
+    Service to generate the purchasing report.
+
+    Returns a list summary detailing the entire purchase order
+    """
+
     purchase_order_item = Purchase_Order_Item.objects.filter(purchase_order=purchase_order)
     stall = Stall.objects.all()
 
     fish_list = list()
     for poi in purchase_order_item:
+        #First list contains the fish name, chinese name, and the sequence
         fish_dict = dict()
         fish_dict['id'] = poi.fish.id
         fish_dict['name'] = poi.fish.name
@@ -89,19 +111,23 @@ def generate_purchasing_list(purchase_order):
         weight = 0
         for s in stall:
             order = get_orders(Order, None, purchase_order=purchase_order, stall=s, status__in=['Purchasing'])
+            #Get the stall id
             values_dict = dict()
             values_dict['stall']  = s.id
+            #If an order exists for the stall, get the order details for the specific fish
             if order:
                 order_item = Order_Item.objects.filter(order=order, fish=poi.fish)
                 values_dict['order_item'] = order_item[0].id if order_item[0].id else None
                 values_dict['quantity'] = order_item[0].quantity if order_item[0].quantity else 0
                 values_dict['weight'] = order_item[0].weight if order_item[0].weight else 0
                 values_dict['cost'] = order_item[0].cost if order_item[0].cost else 0
+            #If there is no order for the stall, mark as 0.
             else:
                 values_dict['order_item'] = None
                 values_dict['quantity'] = 0
                 values_dict['weight'] = 0
                 values_dict['cost'] = 0
+            #Compute for total quantity and weight for totals column in the report
             quantity = quantity + values_dict['quantity']
             weight = weight + values_dict['weight']
             values_list.append(values_dict)
@@ -114,12 +140,17 @@ def generate_purchasing_list(purchase_order):
 
         fish_list.append(fish_dict)
 
+        #Sort the list by fish sequence
         fish_list = sorted(fish_list, key=itemgetter('sequence'))
 
     return stall, fish_list
 
 #Save purchasing details done from the purchasing report
 def save_distributed_fish(request, purchase_order_id, fish_id):
+    """
+    Service to save purchasing details done from the purchasing report
+    """
+
     key = request.POST['key']
     value = request.POST['value'] if request.POST['value'] != '' else 0
 
@@ -131,6 +162,7 @@ def save_distributed_fish(request, purchase_order_id, fish_id):
         for order in orders:
             order_item = Order_Item.objects.filter(order=order, fish=fish, quantity__gt=0)
             order_item.update(cost=value)
+            #Below code is currently not used in this implementation due to change in requirements.
             #if order_item:
             #    update_status(order_item)
         purchase_order_item = Purchase_Order_Item.objects.filter(purchase_order=purchase_order, fish=fish)
@@ -188,6 +220,10 @@ def save_distributed_fish(request, purchase_order_id, fish_id):
 
 #Save purchasing details done from the fish report
 def save_purchased_fish(purchase_order, purchase_order_item_id, weight, cost):
+    """
+    Service to save purchasing details done from the fish report
+    """
+
     weight = 0 if weight == '' else weight
     cost = 0 if cost == '' else cost
     purchase_order_item = Purchase_Order_Item.objects.filter(id=purchase_order_item_id)
@@ -196,6 +232,10 @@ def save_purchased_fish(purchase_order, purchase_order_item_id, weight, cost):
 
 #Save purchasing details done from the stall report
 def save_stall(purchase_order, order_item_id, weight, cost):
+    """
+    Service to save purchasing details done from the stall report
+    """
+
     weight = 0 if weight == '' else weight
     cost = 0 if cost == '' else cost
     order_item = Order_Item.objects.filter(id=order_item_id)
@@ -203,6 +243,12 @@ def save_stall(purchase_order, order_item_id, weight, cost):
 
 #Perform status update of the order_items on based on purchasing information
 def update_status(order_item):
+    """
+    Service to perform status update of the order_items on based on purchasing information
+
+    Currently not used in this implementation due to change in requirements.
+    """
+
     if order_item[0].quantity <= order_item[0].weight:
         if  order_item[0].cost and order_item[0].cost != 0.0:
             order_item.update(status='Purchased')
@@ -218,6 +264,12 @@ def update_status(order_item):
 
 #Check order completion based on status of order items
 def check_order_item_completion(order):
+    """
+    Service to order completion based on status of order items
+
+    Currently not used in this implementation due to change in requirements.
+    """
+
     order_item = Order_Item.objects.filter(order=order)
     done = True
 
@@ -233,6 +285,10 @@ def check_order_item_completion(order):
 
 #Save new fish
 def create_new_fish(fish_name, purchase_order_id):
+    """
+    Service to handle the creation of new line items for open orders due to an adhoc creation of new fish
+    """
+
     sequence = Fish.objects.all().aggregate(Max('sequence'))['sequence__max'] + 1
     fish = Fish.objects.create(name=fish_name, sequence=sequence)
     create_fish_in_items(fish)

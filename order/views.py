@@ -15,6 +15,10 @@ from order.services import create_order, save_order, post_order_submit_po, creat
 # Create your views here.
 @login_required(login_url="/login/")
 def order_all(request, user_id, stall_id=None):
+    """
+    View to handle order related user requests
+    """
+
     if request.method == 'POST':
         template, context = post_order(request, user_id)
     else:
@@ -32,6 +36,10 @@ def order_all(request, user_id, stall_id=None):
 
 @login_required(login_url="/login/")
 def order_by_id(request, user_id, order_id=None):
+    """
+    View to handle specific order related user requests
+    """
+
     if request.method == 'POST':
         template, context = post_order(request, user_id, order_id)
     else:
@@ -46,6 +54,10 @@ def order_by_id(request, user_id, order_id=None):
 
 @login_required(login_url="/login/")
 def order_summary(request, user_id):
+    """
+    View to handle user requests for order summary
+    """
+
     template = 'order/order_summary.html'
     context = { 'purchase_order': generate_stall_orders_list(request, user_id, status__in=['New','Submitted', 'Purchasing','Invoiced','Closed', 'Cancelled']),
                 'user_id': user_id,
@@ -55,11 +67,16 @@ def order_summary(request, user_id):
     return render(request, template, context)
 
 def get_order(request, user_id, isAll, order_id=None, stall_id=None):
+    """
+    View to handle order related user GET requests
+    """
+
     User = get_user_model()
     user = User.objects.get(id=user_id)
     isSuperuser = request.user.is_superuser
 
     if isSuperuser:
+        #Return specific order view
         if order_id:
             order = generate_order_list(id=order_id)[0]
             template = 'order/get_order.html'
@@ -67,12 +84,14 @@ def get_order(request, user_id, isAll, order_id=None, stall_id=None):
                         'order': order,
                         'user_id': user_id}
         else:
+            #Return list of orders for the specific stall view
             if stall_id:
                 template = 'order/order_summary.html'
                 context = { 'purchase_order': generate_order_list_for_stall(request, stall_id, status__in=['New','Submitted', 'Purchasing','Invoiced','Closed', 'Cancelled']),
                             'user_id': user_id,
                             'summary': True
                             }
+            #Return list of orders for all stall view
             else:
                 stall_orders = generate_stall_orders_list(request, user, status__in=['New','Submitted', 'Purchasing'])
                 template = 'order/list_order_all.html'
@@ -82,6 +101,7 @@ def get_order(request, user_id, isAll, order_id=None, stall_id=None):
 
     else:
         stall = Stall.objects.get(name=user)
+        #Return list of orders for stalls assigned to the same user view
         if isAll:
             orders = generate_order_list(stall=stall)
             template = 'order/list_order_by_stall.html'
@@ -91,11 +111,13 @@ def get_order(request, user_id, isAll, order_id=None, stall_id=None):
 
         else:
             order = generate_order_list(stall=stall, id=order_id)[0]
+            #Return specific order view
             if order:
                 template = 'order/get_order.html'
                 context = { 'stall': stall,
                             'order': order,
                             'user_id': user_id}
+            #Return new order view
             else:
                 template = 'order/new_order.html'
                 context = { 'stall': stall,
@@ -105,22 +127,30 @@ def get_order(request, user_id, isAll, order_id=None, stall_id=None):
     return template, context
 
 def post_order(request, user_id, order_id=None):
+    """
+    View to handle order related user POST requests
+    """
+
     User = get_user_model()
     user = User.objects.get(id=user_id)
     stall = Stall.objects.get(id=request.POST['stall_id']) if request.user.is_superuser else Stall.objects.get(name=user)
     save = False
 
+    #Call create order service and return corresponding template and context
     if request.POST['submit'] == 'Create Order':
         order = create_order(request, user)
         order_id = order.id
 
+    #Call save order service and return corresponding template and context
     elif request.POST['submit'] == 'Save':
         save_order(request, user)
         save = True
 
+    #Call cancel order service and return corresponding template and context
     elif request.POST['submit'] == 'Cancel':
         cancel_order(request, user)
 
+    #Call submit order service and return corresponding template and context
     elif request.POST['submit'] == 'Submit for Purchasing':
         post_order_submit_po(request, user)
         save = True
@@ -136,6 +166,10 @@ def post_order(request, user_id, order_id=None):
 
 @login_required(login_url="/login/")
 def cancel_order(request, user=None):
+    """
+    Method to handle the cancellation of order 
+    """
+
     order_id = request.POST['order_id']
     user_id = user.id if user else request.POST['user_id']
     order = Order.objects.filter(id=order_id)
@@ -148,6 +182,10 @@ def cancel_order(request, user=None):
 
 @login_required(login_url="/login/")
 def add_fish_from_order(request, user_id):
+    """
+    View to handle the creation of new line items for open orders due to an adhoc creation of new fish
+    """
+
     fish_name = request.POST['fish_name']
     create_new_fish(fish_name)
     return render(request, 'fish/create_fish.html', {'status': 'success'})

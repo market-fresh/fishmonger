@@ -7,16 +7,24 @@ from order.models import Order
 from stall.models import Stall
 
 class Invoice(TimeStampedModel):
-  stall = models.ForeignKey('stall.Stall', on_delete=models.CASCADE)
-  ice = models.FloatField(null=True)
-  cash_float = models.FloatField(null=True)
-  total_cost = models.FloatField()
-  sales = models.FloatField(null=True)
-  order = models.ForeignKey('order.Order', null=True, on_delete=models.CASCADE)
+    """
+    Model class definition of Invoice model
+    """
+
+    stall = models.ForeignKey('stall.Stall', on_delete=models.CASCADE)
+    ice = models.FloatField(null=True)
+    cash_float = models.FloatField(null=True)
+    total_cost = models.FloatField()
+    sales = models.FloatField(null=True)
+    order = models.ForeignKey('order.Order', null=True, on_delete=models.CASCADE)
 
 class Invoice_Item(TimeStampedModel):
-  invoice = models.ForeignKey('Invoice', on_delete=models.CASCADE)
-  fish = models.ForeignKey('fish.Fish', on_delete=models.CASCADE)
-  weight = models.FloatField(default=0)
-  cost = models.FloatField(default=0)
-  total = models.FloatField(null=True)
+    """
+    Model class definition of Invoice Item model
+    """
+
+    invoice = models.ForeignKey('Invoice', on_delete=models.CASCADE)
+    fish = models.ForeignKey('fish.Fish', on_delete=models.CASCADE)
+    weight = models.FloatField(default=0)
+    cost = models.FloatField(default=0)
+    total = models.FloatField(null=True)

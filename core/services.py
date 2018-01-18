@@ -6,6 +6,9 @@ from purchase_order.models import Purchase_Order, Purchase_Order_Item
 from invoice.models import Invoice, Invoice_Item
 
 def get_or_none(model, action, *args, **kwargs):
+    """
+    Service to abstract the get and filter method call on model objects, and handle DoesNotExist error by returning None instead
+    """
     try:
         if action == 'get':
             return model.objects.get(*args, **kwargs)
@@ -15,6 +18,9 @@ def get_or_none(model, action, *args, **kwargs):
         return None
 
 def get_orders(model, day, *args, **kwargs):
+    """
+    Service to handle the get and filter method calls on model objects based on day
+    """
 
     if day == 'today':
         today = datetime.now().date()
@@ -27,6 +33,10 @@ def get_orders(model, day, *args, **kwargs):
         return get_or_none(model, 'filter', *args, **kwargs)
 
 def create_fish_in_items(fish):
+    """
+    Service to handle creation of new order line items, purchase order line items, and invoice line items during the adhoc creation of new fish
+    """
+
     #Update orders with new fish
     order_set = Order.objects.filter(status__in=['New','Submitted', 'Purchasing', 'Invoiced'])
     for order in order_set:

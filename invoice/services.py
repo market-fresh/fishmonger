@@ -7,6 +7,12 @@ from order.models import Order, Order_Item
 from stall.models import Stall
 
 def generate_invoice_item_list(invoice):
+    """
+    Service to handle generation of invoice item list for specific invoices.
+
+    Returns a list of invoice items
+    """
+
     invoice_item = Invoice_Item.objects.filter(invoice=invoice)
     invoice_item_list = list()
 
@@ -23,6 +29,12 @@ def generate_invoice_item_list(invoice):
 
 
 def generate_invoice_list(request, user=None, stall_id=None):
+    """
+    Service to handle generation of invoice list for all stalls or for a specific stall.
+
+    Returns a list of invoices
+    """
+
     stall_invoice_list = list()
     if stall_id:
         stalls = Stall.objects.filter(id=stall_id)
@@ -47,6 +59,12 @@ def generate_invoice_list(request, user=None, stall_id=None):
     return stall_invoice_list
 
 def generate_invoice_of_stall(request, user, stall_id):
+    """
+    Service to handle generation of invoice list for a specific stall.
+
+    Returns a list of invoices
+    """
+
     stall_invoice_list = list()
     stalls = Stall.objects.filter(id=stall_id)
 
@@ -63,6 +81,10 @@ def generate_invoice_of_stall(request, user, stall_id):
     return stall_invoice_list
 
 def generate_invoice(order_id=None, purchase_order=None):
+    """
+    Service to handle generation of invoice from a fulfilled order
+    """
+
     order_list = Order.objects.filter(id=order_id) if order_id else Order.objects.filter(purchase_order=purchase_order)
     for order in order_list:
         if order.status == 'Purchasing':
@@ -75,6 +97,10 @@ def generate_invoice(order_id=None, purchase_order=None):
             generate_invoice_items(order, invoice)
 
 def calculate_total_cost(model, item):
+    """
+    Service to handle calculation of total cost of an invoice from related invoice items
+    """
+
     if model == Order:
         total_cost = Order_Item.objects.filter(order=item).aggregate(total=Sum(F('weight') * F('cost')))['total']
     elif model == Invoice:
@@ -82,6 +108,10 @@ def calculate_total_cost(model, item):
     return total_cost
 
 def generate_invoice_items(order, invoice):
+    """
+    Service to handle generation of invoice items from order items of a fulfilled order
+    """
+
     order_item = Order_Item.objects.filter(order=order)
     for oi in order_item:
         Invoice_Item.objects.create(invoice=invoice,
@@ -91,6 +121,10 @@ def generate_invoice_items(order, invoice):
                                     total=oi.weight*oi.cost)
 
 def save_invoice(request, invoice_id):
+    """
+    Service to handle update in invoice details
+    """
+
     if request.POST['key'] == 'total':
         ice = request.POST['ice'] if request.POST['ice'] else None
         cash_float = request.POST['cash_float'] if request.POST['cash_float'] else None
@@ -110,13 +144,16 @@ def save_invoice(request, invoice_id):
 
 
 def close_invoice(request, invoice_id):
+    """
+    Service to handle closing of order and invoice.
+    """
+
     ice = request.POST['ice_'+invoice_id] if request.POST['ice_'+invoice_id] else None
     cash_float = request.POST['cash_float_'+invoice_id] if request.POST['cash_float_'+invoice_id] else None
     sales = request.POST['sales_'+invoice_id] if request.POST['sales_'+invoice_id] else None
 
     if ice and cash_float and sales:
         invoice = Invoice.objects.get(id=invoice_id)
-        #save_invoice(request, invoice_id)
         invoice = Invoice.objects.filter(id=invoice_id)
         invoice.update(ice=ice, cash_float=cash_float, sales=sales)
         order = Order.objects.filter(invoice=invoice)
@@ -129,6 +166,10 @@ def close_invoice(request, invoice_id):
         return 'Ice, Float, or Sales is missing'
 
 def check_exists_invoice_list(invoices):
+    """
+    Service to check if invoice exists from a list of invoices.
+    """
+
     for invoice in invoices:
         if invoice['status']:
             return True

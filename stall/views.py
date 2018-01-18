@@ -7,6 +7,10 @@ from stall.models import Stall
 # Create your views here.
 @login_required(login_url="/login/")
 def stall(request):
+    """
+    View to handle stall related user requests
+    """
+
     if request.method == 'POST':
         form = StallForm(request.POST)
         stall = Stall.objects.all()
@@ -25,6 +29,10 @@ def stall(request):
 
 @login_required(login_url="/login/")
 def update_stall(request, stall_id):
+    """
+    View to handle user request to update stall details
+    """
+
     stall = Stall.objects.get(id=stall_id)
     stall.description = request.POST['description']
     stall.save()
@@ -32,13 +40,22 @@ def update_stall(request, stall_id):
 
 @login_required(login_url="/login/")
 def delete_stall(request, stall_id):
+    """
+    View to handle user request to delete stall
+    """
+
     form = StallForm()
     stall = Stall.objects.get(id=stall_id)
     stall.delete()
     stall = Stall.objects.all()
     return render(request, 'stall/stall.html', {'form': form, 'stall': stall})
 
+@login_required(login_url="/login/")
 def create_stall(request):
+    """
+    View to handle user request to create stall
+    """
+
     if request.method == 'POST':
         form = StallForm(request.POST)
         if form.is_valid():
@@ -48,7 +65,12 @@ def create_stall(request):
         form = StallForm()
         return render(request, 'stall/create_stall.html', {'form': form})
 
+@login_required(login_url="/login/")
 def search_stall(request):
+    """
+    View to handle search stall
+    """
+
     if request.method == 'GET':
         if 'q' in request.GET:
             q = request.GET['q']

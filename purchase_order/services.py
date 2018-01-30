@@ -83,7 +83,8 @@ def generate_po_by_stall(purchase_order, stall=None):
         order_stall_dict['order_item'] = generate_order_item_list(Order_Item, order=order)
         order_stall_list.append(order_stall_dict)
 
-    purchase_order_dict['order'] = order_stall_list
+    #purchase_order_dict['order'] = order_stall_list
+    purchase_order_dict['order'] = sorted(order_stall_list, key=lambda k: k['stall_id'])
 
     return purchase_order_dict
 
